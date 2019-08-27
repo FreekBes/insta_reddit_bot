@@ -1,12 +1,24 @@
 // load basic packages
 const process = require('process');
 const fs = require('fs');
+const { exec } = require('child_process');
 
 // create temporary folder if it does not exist
 if (!fs.existsSync(__dirname + "/temp")) {
     console.warn("Temporary folder does not exist! Creating...");
     fs.mkdirSync(__dirname + "/temp");
     console.log("Temporary folder created.");
+}
+
+function clearTemp() {
+    exec("rm -rf " + __dirname + "/temp/*", function(err, stdout, stderr) {
+        if (err) {
+            console.warn("Failed to clear temp folder!");
+        }
+        else {
+            console.log("Cleared temp folder");
+        }
+    });
 }
 
 // load custom packages
@@ -65,6 +77,8 @@ igClient.simulate.preLoginFlow().then(function() {
                             }).catch(function(err) {
                                 console.warn("Could not upload image to Instagram!");
                                 console.error(err);
+                            }).finally(function() {
+                                clearTemp();
                             });
                         }
                         else if (media['type'] == 'video') {
@@ -78,6 +92,8 @@ igClient.simulate.preLoginFlow().then(function() {
                             }).catch(function(err) {
                                 console.warn("Could not upload video to Instagram!");
                                 console.error(err);
+                            }).finally(function() {
+                                clearTemp();
                             });
                         }
                         else {
@@ -86,6 +102,7 @@ igClient.simulate.preLoginFlow().then(function() {
                     }).catch(function(err) {
                         console.warn("MediaDownloader failed!");
                         console.error(err);
+                        clearTemp();
                     });
                 }
                 else {
