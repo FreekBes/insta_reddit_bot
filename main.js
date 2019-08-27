@@ -47,9 +47,9 @@ function commentCredits(instagramPostId, originalUploader, redditPostId) {
     }).catch(function(err) {
         console.warn("Could not comment credits!");
         console.error(err);
-    })
+        console.log(err.response.body);
+    });
 }
-
 
 // load device
 // if you get the IgSentryBlockError, replace _hahano with some random other string to circumvent it
@@ -94,7 +94,7 @@ igClient.simulate.preLoginFlow().then(function() {
                                 caotion: post['data']['title']
                             }).then(function(publishResult) {
                                 console.log(publishResult);
-                                commentCredits(publishResult.upload_id, post['data']['author'], post['data']['id']);
+                                commentCredits(publishResult.media.code, post['data']['author'], post['data']['id']);
                                 postStatus.markPostAsDone(post['data']['id']);
                                 clearTemp();
                             }).catch(function(err) {
@@ -113,7 +113,7 @@ igClient.simulate.preLoginFlow().then(function() {
                                 caption: post['data']['title']
                             }).then(function(publishResult) {
                                 console.log(publishResult);
-                                commentCredits(publishResult.upload_id, post['data']['author'], post['data']['id']);
+                                commentCredits(publishResult.media.code, post['data']['author'], post['data']['id']);
                                 postStatus.markPostAsDone(post['data']['id']);
                                 clearTemp();
                             }).catch(function(err) {
