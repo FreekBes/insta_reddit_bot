@@ -32,6 +32,16 @@ const loginDetails = require('./logindetails.json');
 const igPrivateApi = require('instagram-private-api');
 const igClient = new igPrivateApi.IgApiClient();
 
+// commenting function for posts
+function commentCredits(instagramPostId, originalUploader, redditPostId) {
+    console.log("Commenting credits...");
+    igClient.media.comment({
+        mediaId: instagramPostId,
+        text: "Mirrored from a post on " + loginDetails.subreddit + " by /u/" + originalUploader + ": http://redd.it/" + redditPostId
+    });
+}
+
+
 // load device
 // if you get the IgSentryBlockError, replace _hahano with some random other string to circumvent it
 igClient.state.generateDevice(loginDetails.userName + "_hahano");
@@ -89,10 +99,12 @@ igClient.simulate.preLoginFlow().then(function() {
                                 caption: post['data']['title']
                             }).then(function(publishResult) {
                                 console.log(publishResult);
+                                commentCredits(publishResult.upload_id, post['data']['author'], post['data']['id']);
                                 clearTemp();
                             }).catch(function(err) {
                                 console.warn("Could not upload video to Instagram!");
                                 console.error(err);
+                                commentCredits(publishResult.upload_id, post['data']['author'], post['data']['id']);
                                 clearTemp();
                             });
                         }
