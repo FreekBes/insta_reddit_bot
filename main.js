@@ -105,5 +105,3 @@ igClient.simulate.preLoginFlow().then(function() {
     console.warn("Failed to simulate pre-login flow!");
     console.error(err);
 });
-
-console.log("All done!");
