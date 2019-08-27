@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/FreekBes/insta_reddit_bot/issues"
   },
-  "homepage": "https://github.com/FreekBes/insta_reddit_bot#readme"
+  "homepage": "https://github.com/FreekBes/insta_reddit_bot#readme",
+  "dependencies": {
+    "instagram-private-api": "github:dilame/instagram-private-api"
+  }
 }
