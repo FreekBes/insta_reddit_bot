@@ -1,9 +1,20 @@
 // load basic packages
 const process = require('process');
+const fs = require('fs');
+
+// create temporary folder if it does not exist
+if (!fs.existsSync(__dirname + "/temp")) {
+    console.warn("Temporary folder does not exist! Creating...");
+    fs.mkdirSync(__dirname + "/temp");
+    console.log("Temporary folder created.");
+}
+
+// load custom packages
+const redditor = require("./redditor.js");
+const mediaDownloader = require('./mediadownloader.js');
 
 // retrieve details needed for logging in to Instagram
 const loginDetails = require('./logindetails.json');
-const redditor = require("./redditor.js");
 
 // load the Instagram Private API Client
 const igPrivateApi = require('instagram-private-api');
@@ -29,6 +40,57 @@ igClient.simulate.preLoginFlow().then(function() {
             // retrieve a post that is still on the to-do list
             redditor.getPostToDo().then(function(post) {
                 console.log(post);
+
+                // fix broken imgur links
+                if (post['data']['url'].match(/http(s|):\/\/*imgur\.com\/.......$/) != null) {
+                    post['data']['url'] = "https://i." + post['data']['url'].split("//")[1] + ".jpg";
+                }
+                
+                // fix more broken links
+                post['data']['url'] = post['data']['url'].replace("&amp;", "&");
+
+                // check if post is not a selftext
+                if (post['data']['selftext'] == "" || post['data']['selftext'] == null) {
+                    console.log("Downloading media...");
+                    mediaDownloader.downloadMedia(post).then(function(media) {
+                        console.log("Media downloaded!");
+                        console.log(media);
+                        if (media['type'] == 'image') {
+                            console.log("Uploading image to Instagram...");
+                            igClient.publish.photo({
+                                file: fs.readFileSync(media['image']),
+                                caotion: post['data']['title']
+                            }).then(function(publishResult) {
+                                console.log(publishResult);
+                            }).catch(function(err) {
+                                console.warn("Could not upload image to Instagram!");
+                                console.error(err);
+                            });
+                        }
+                        else if (media['type'] == 'video') {
+                            console.log("Uploading video to Instagram...");
+                            igClient.publish.video({
+                                video: fs.readFileSync(media['video']),
+                                coverImage: fs.readFileSync(media['thumbnail']),
+                                caption: post['data']['title']
+                            }).then(function(publishResult) {
+                                console.log(publishResult);
+                            }).catch(function(err) {
+                                console.warn("Could not upload video to Instagram!");
+                                console.error(err);
+                            });
+                        }
+                        else {
+                            console.warn("Unknown media type!");
+                        }
+                    }).catch(function(err) {
+                        console.warn("MediaDownloader failed!");
+                        console.error(err);
+                    });
+                }
+                else {
+                    console.warn("Selftext posts are not supported yet.");
+                }
             });
         }
         catch(err) {
