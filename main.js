@@ -22,7 +22,10 @@ function clearTemp() {
 }
 
 // load custom packages
+const postStatus = require("./poststatus.js");
+postStatus.init();
 const redditor = require("./redditor.js");
+redditor.setPostStatus(postStatus);
 const mediaDownloader = require('./mediadownloader.js');
 
 // retrieve details needed for logging in to Instagram
@@ -84,10 +87,13 @@ igClient.simulate.preLoginFlow().then(function() {
                                 caotion: post['data']['title']
                             }).then(function(publishResult) {
                                 console.log(publishResult);
+                                commentCredits(publishResult.upload_id, post['data']['author'], post['data']['id']);
+                                postStatus.markPostAsDone(post['data']['id']);
                                 clearTemp();
                             }).catch(function(err) {
                                 console.warn("Could not upload image to Instagram!");
                                 console.error(err);
+                                postStatus.markPostAsDone(post['data']['id']);
                                 clearTemp();
                             });
                         }
@@ -100,11 +106,12 @@ igClient.simulate.preLoginFlow().then(function() {
                             }).then(function(publishResult) {
                                 console.log(publishResult);
                                 commentCredits(publishResult.upload_id, post['data']['author'], post['data']['id']);
+                                postStatus.markPostAsDone(post['data']['id']);
                                 clearTemp();
                             }).catch(function(err) {
                                 console.warn("Could not upload video to Instagram!");
                                 console.error(err);
-                                commentCredits(publishResult.upload_id, post['data']['author'], post['data']['id']);
+                                postStatus.markPostAsDone(post['data']['id']);
                                 clearTemp();
                             });
                         }
@@ -114,6 +121,7 @@ igClient.simulate.preLoginFlow().then(function() {
                     }).catch(function(err) {
                         console.warn("MediaDownloader failed!");
                         console.error(err);
+                        postStatus.markPostAsDone(post['data']['id']);
                         clearTemp();
                     });
                 }

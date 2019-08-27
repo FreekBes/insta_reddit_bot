@@ -1,10 +1,13 @@
 const request = require('request');
-const postStatus = require("./poststatus.js");
-postStatus.init();
 
 const rPrefix = "https://www.reddit.com";
 let r = null;
 const rSuffix = "/.json?limit=";
+let postStatus = null;
+
+exports.setPostStatus = function(newPostStatus) {
+    postStatus = newPostStatus;
+};
 
 exports.setSubreddit = function(subreddit) {
     if (subreddit.indexOf("/r/") != 0) {
