@@ -37,19 +37,17 @@ const igClient = new igPrivateApi.IgApiClient();
 
 // commenting function for posts
 function commentCredits(instagramPostId, originalUploader, redditPostId) {
-    setTimeout(function() {
-        console.log("Commenting credits...");
-        igClient.media.comment({
-            mediaId: instagramPostId,
-            text: "Mirrored from a post on " + loginDetails.subreddit + " by /u/" + originalUploader + ": http://redd.it/" + redditPostId
-        }).then(function(commentResponse) {
-            console.log(commentResponse);
-            console.log("Credits commented.");
-        }).catch(function(err) {
-            console.warn("Could not comment credits!");
-            console.error(err);
-        });
-    }, 1000);
+    console.log("Commenting credits...");
+    igClient.media.comment({
+        mediaId: instagramPostId,
+        text: "Mirrored from a post on " + loginDetails.subreddit + " by /u/" + originalUploader + ": http://redd.it/" + redditPostId
+    }).then(function(commentResponse) {
+        console.log(commentResponse);
+        console.log("Credits commented.");
+    }).catch(function(err) {
+        console.warn("Could not comment credits!");
+        console.error(err);
+    })
 }
 
 
