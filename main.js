@@ -41,7 +41,13 @@ function commentCredits(instagramPostId, originalUploader, redditPostId) {
     igClient.media.comment({
         mediaId: instagramPostId,
         text: "Mirrored from a post on " + loginDetails.subreddit + " by /u/" + originalUploader + ": http://redd.it/" + redditPostId
-    });
+    }).then(function(commentResponse) {
+        console.log(commentResponse);
+        console.log("Credits commented.");
+    }).catch(function(err) {
+        console.warn("Could not comment credits!");
+        console.error(err);
+    })
 }
 
 
