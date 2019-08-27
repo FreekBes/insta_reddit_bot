@@ -39,7 +39,7 @@ igClient.simulate.preLoginFlow().then(function() {
             
             // retrieve a post that is still on the to-do list
             redditor.getPostToDo().then(function(post) {
-                console.log(post);
+                console.log("Found a post to handle");
 
                 // fix broken imgur links
                 if (post['data']['url'].match(/http(s|):\/\/*imgur\.com\/.......$/) != null) {
@@ -105,3 +105,5 @@ igClient.simulate.preLoginFlow().then(function() {
     console.warn("Failed to simulate pre-login flow!");
     console.error(err);
 });
+
+console.log("All done!");
