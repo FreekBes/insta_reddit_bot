@@ -46,7 +46,10 @@ exports.downloadSimpleVideo = function(postId, url, tempFolder) {
                     
                     console.log("Resized MP4 with success!");
                     createVideoThumb(convertLoc, thumbLoc).then(function() {
-                        resolve(convertLoc, thumbLoc);
+                        resolve({
+                            video: convertLoc, 
+                            thumbnail: thumbLoc
+                        });
                     })
                     .catch(function(err) {
                         reject(err);
@@ -124,7 +127,10 @@ exports.downloadRedditVideo = function(postId, redditVideo, tempFolder) {
 
                     console.log("Resized MP4 with success!")
                     createVideoThumb(convertLoc, thumbLoc).then(function() {
-                        resolve(convertLoc, thumbLoc);
+                        resolve({
+                            video: convertLoc, 
+                            thumbnail: thumbLoc
+                        });
                     })
                     .catch(function(err) {
                         reject(err);

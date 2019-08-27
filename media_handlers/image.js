@@ -47,7 +47,11 @@ exports.downloadImage = function(postId, url, previewImages, tempFolder) {
 
                     if (asMp4) {
                         videoHandler.downloadSimpleVideo(postId, url, tempFolder).then(function(videoLoc, thumbLoc) {
-                            resolve(true, videoLoc, thumbLoc);
+                            resolve({
+                                isVideo: true, 
+                                video: videoLoc, 
+                                thumbnail: thumbLoc
+                            });
                         }).catch(function(err) {
                             reject(err);
                         });
@@ -69,8 +73,11 @@ exports.downloadImage = function(postId, url, previewImages, tempFolder) {
                             let newFileSrc = tempFolder + postId + ".jpg";
                             try {
                                 imag.background(0xFFFFFFFF).contain(1000, 1000).quality(90).write(newFileSrc, function() {
-                                    console.log("Resized image with success.");
-                                    resolve(false, newFileSrc);
+                                    console.log("Resized image with success. Saved to " + newFileSrc);
+                                    resolve({
+                                        isVideo: false, 
+                                        image: newFileSrc
+                                    });
                                 });
                             }
                             catch(err) {

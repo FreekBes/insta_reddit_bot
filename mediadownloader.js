@@ -11,11 +11,11 @@ exports.downloadMedia = function(post) {
         if (mediaUrl.match(/http(s|):\/\/i.imgur.com\/.*.gifv$/) != null) {
             console.log("GIFV on Imgur detected!");
             mediaUrl = mediaUrl.replace(".gifv", ".mp4");
-            videoHandler.downloadSimpleVideo(post['data']['id'], mediaUrl, __dirname + "/temp/").then(function(videoLoc, thumbLoc) {
+            videoHandler.downloadSimpleVideo(post['data']['id'], mediaUrl, __dirname + "/temp/").then(function(res) {
                 resolve({
                     type: 'video',
-                    video: videoLoc,
-                    thumbnail: thumbLoc
+                    video: res['video'],
+                    thumbnail: res['thumbnail']
                 });
             }).catch(function(err) {
                 reject(err);
@@ -25,11 +25,11 @@ exports.downloadMedia = function(post) {
             if (post['data']['media']['reddit_video'] != undefined && post['data']['media']['reddit_video'] != null) {
                 if (post['data']['media']['reddit_video']['fallback_url'] != undefined && post['data']['media']['reddit_video']['fallback_url'] != null) {
                     console.log("Video on Reddit detected!");
-                    videoHandler.downloadRedditVideo(post['data']['id'], post['data']['media']['reddit_video'], __dirname + "/temp/").then(function(videoLoc, thumbLoc) {
+                    videoHandler.downloadRedditVideo(post['data']['id'], post['data']['media']['reddit_video'], __dirname + "/temp/").then(function(res) {
                         resolve({
                             type: 'video',
-                            video: videoLoc,
-                            thumbnail: thumbLoc
+                            video: res['video'],
+                            thumbnail: res['thumbnail']
                         });
                     }).catch(function(err) {
                         reject(err);
@@ -58,11 +58,11 @@ exports.downloadMedia = function(post) {
                 mediaUrl += ".mp4";
             }
 
-            videoHandler.downloadSimpleVideo(post['data']['id'], mediaUrl, __dirname + "/temp/").then(function(videoLoc, thumbLoc) {
+            videoHandler.downloadSimpleVideo(post['data']['id'], mediaUrl, __dirname + "/temp/").then(function(res) {
                 resolve({
                     type: 'video',
-                    video: videoLoc,
-                    thumbnail: thumbLoc
+                    video: res['video'],
+                    thumbnail: res['thumbnail']
                 });
             }).catch(function(err) {
                 reject(err);
@@ -70,18 +70,18 @@ exports.downloadMedia = function(post) {
         }
         else {
             console.log("Normal image detected");
-            imageHandler.downloadImage(post['data']['id'], mediaUrl, post['data']['preview']['images'], __dirname + "/temp/").then(function(isVideo, imageLoc, thumbLoc) {
-                if (isVideo) {
+            imageHandler.downloadImage(post['data']['id'], mediaUrl, post['data']['preview']['images'], __dirname + "/temp/").then(function(res) {
+                if (res['isVideo']) {
                     resolve({
                         type: 'video',
-                        video: imageLoc,
-                        thumbnail: thumbLoc
+                        video: res['video'],
+                        thumbnail: res['thumbnail']
                     });
                 }
                 else {
                     resolve({
                         type: 'image',
-                        image: imageLoc
+                        image: res['image']
                     });
                 }
             }).catch(function(err) {
