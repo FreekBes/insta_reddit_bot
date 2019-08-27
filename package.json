@@ -22,7 +22,9 @@
   },
   "homepage": "https://github.com/FreekBes/insta_reddit_bot#readme",
   "dependencies": {
+    "image-type": "^4.1.0",
     "instagram-private-api": "^1.26.0",
+    "jimp": "^0.6.4",
     "request": "^2.88.0"
   }
 }
