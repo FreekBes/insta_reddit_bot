@@ -88,6 +88,7 @@ igClient.simulate.preLoginFlow().then(function() {
                         console.log(media);
                         if (media['type'] == 'image') {
                             console.log("Uploading image to Instagram...");
+                            console.log("Caption: " + post['data']['title']);
                             igClient.publish.photo({
                                 file: fs.readFileSync(media['image']),
                                 caotion: post['data']['title']
@@ -105,6 +106,7 @@ igClient.simulate.preLoginFlow().then(function() {
                         }
                         else if (media['type'] == 'video') {
                             console.log("Uploading video to Instagram...");
+                            console.log("Caption: " + post['data']['title']);
                             igClient.publish.video({
                                 video: fs.readFileSync(media['video']),
                                 coverImage: fs.readFileSync(media['thumbnail']),
