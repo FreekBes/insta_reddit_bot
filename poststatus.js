@@ -31,4 +31,4 @@ exports.postNotDone = function(postId) {
 exports.clearDoneList = function() {
     fs.writeFileSync(postsFile, "[]", 'utf8');
     module.exports.reloadDoneList();
-}
+};
