@@ -74,10 +74,10 @@ igClient.simulate.preLoginFlow().then(function() {
                                 caotion: post['data']['title']
                             }).then(function(publishResult) {
                                 console.log(publishResult);
+                                clearTemp();
                             }).catch(function(err) {
                                 console.warn("Could not upload image to Instagram!");
                                 console.error(err);
-                            }).finally(function() {
                                 clearTemp();
                             });
                         }
@@ -89,10 +89,10 @@ igClient.simulate.preLoginFlow().then(function() {
                                 caption: post['data']['title']
                             }).then(function(publishResult) {
                                 console.log(publishResult);
+                                clearTemp();
                             }).catch(function(err) {
                                 console.warn("Could not upload video to Instagram!");
                                 console.error(err);
-                            }).finally(function() {
                                 clearTemp();
                             });
                         }
