@@ -22,6 +22,6 @@
   },
   "homepage": "https://github.com/FreekBes/insta_reddit_bot#readme",
   "dependencies": {
-    
+    "instagram-private-api": "^1.26.0"
   }
 }
