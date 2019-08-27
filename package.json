@@ -1,0 +1,24 @@
+{
+  "name": "insta_reddit_bot",
+  "version": "0.1.0",
+  "description": "A bot for Instagram which pulls images from Reddit",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FreekBes/insta_reddit_bot.git"
+  },
+  "keywords": [
+    "instagram",
+    "reddit",
+    "bot"
+  ],
+  "author": "Freek Bes",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/FreekBes/insta_reddit_bot/issues"
+  },
+  "homepage": "https://github.com/FreekBes/insta_reddit_bot#readme"
+}
