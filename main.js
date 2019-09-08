@@ -83,6 +83,7 @@ igClient.simulate.preLoginFlow().then(function() {
                 // check if post is not a selftext
                 if (post['data']['selftext'] == "" || post['data']['selftext'] == null) {
                     console.log("Downloading media...");
+                    let tempExtraCaption = "\u2063\n\u2063\nMirrored from a post on " + loginDetails.subreddit + " by /u/" + post['data']['author'] + ": http://redd.it/" + post['data']['id'];
                     mediaDownloader.downloadMedia(post).then(function(media) {
                         console.log("Media downloaded!");
                         console.log(media);
@@ -91,10 +92,10 @@ igClient.simulate.preLoginFlow().then(function() {
                             console.log("Caption: " + post['data']['title']);
                             igClient.publish.photo({
                                 file: fs.readFileSync(media['image']),
-                                caption: post['data']['title']
+                                caption: post['data']['title'] + tempExtraCaption
                             }).then(function(publishResult) {
                                 console.log(publishResult);
-                                commentCredits(publishResult.media.code, post['data']['author'], post['data']['id']);
+                                // commentCredits(publishResult.media.code, post['data']['author'], post['data']['id']);
                                 postStatus.markPostAsDone(post['data']['id']);
                                 clearTemp();
                             }).catch(function(err) {
@@ -110,10 +111,10 @@ igClient.simulate.preLoginFlow().then(function() {
                             igClient.publish.video({
                                 video: fs.readFileSync(media['video']),
                                 coverImage: fs.readFileSync(media['thumbnail']),
-                                caption: post['data']['title']
+                                caption: post['data']['title'] + tempExtraCaption
                             }).then(function(publishResult) {
                                 console.log(publishResult);
-                                commentCredits(publishResult.media.code, post['data']['author'], post['data']['id']);
+                                // commentCredits(publishResult.media.code, post['data']['author'], post['data']['id']);
                                 postStatus.markPostAsDone(post['data']['id']);
                                 clearTemp();
                             }).catch(function(err) {
