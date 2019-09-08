@@ -91,7 +91,7 @@ igClient.simulate.preLoginFlow().then(function() {
                             console.log("Caption: " + post['data']['title']);
                             igClient.publish.photo({
                                 file: fs.readFileSync(media['image']),
-                                caotion: post['data']['title']
+                                caption: post['data']['title']
                             }).then(function(publishResult) {
                                 console.log(publishResult);
                                 commentCredits(publishResult.media.code, post['data']['author'], post['data']['id']);
