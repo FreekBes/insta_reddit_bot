@@ -53,7 +53,7 @@ function commentCredits(instagramPostId, originalUploader, redditPostId) {
 
 // load device
 // if you get the IgSentryBlockError, replace _hahano with some random other string to circumvent it
-igClient.state.generateDevice(loginDetails.userName + "_hahano");
+igClient.state.generateDevice(loginDetails.userName + "_blahblahblah");
 
 // execute all requests prior to authorization in the real Android application
 igClient.simulate.preLoginFlow().then(function() {
