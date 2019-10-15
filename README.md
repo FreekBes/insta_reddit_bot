@@ -55,7 +55,7 @@ sleep $((($RANDOM % 300)+20))
 node /PATH/TO/PROJECT/main.js
 ```
 
-This will add a random delay of at least 20, at most 320 seconds when running the bot **via this script**. Do not forget to modify any active cron jobs: instead of running `node /PATH/TO/PROJECT/main.js`, it should now run `/PATH/TO/PROJET/run.sh`!
+This will add a random delay of at least 20, at most 320 seconds when running the bot **via this script**. Do not forget to modify any active cron jobs: instead of running `node /PATH/TO/PROJECT/main.js`, it should now run `/PATH/TO/PROJECT/run.sh`!
 
 
 
