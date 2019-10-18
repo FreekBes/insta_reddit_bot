@@ -4,6 +4,16 @@ A bot for Instagram which pulls images from Reddit. This is also the source code
 
 
 
+## Requirements
+
+The following software needs to be installed on your system in order for this bot to work:
+- [NodeJS](https://nodejs.org/)
+- [npm](https://www.npmjs.com/get-npm) (often included with NodeJS)
+- [ffmpeg](https://github.com/adaptlearning/adapt_authoring/wiki/Installing-FFmpeg) for video support
+
+Now keep in mind that I run the bot on Linux (Raspbian), so this guide is also focused on Linux. You should be able to run this bot on other operating systems as well, but for video support it might require some modifying of the code in the [video-mediahandler](https://github.com/FreekBes/insta_reddit_bot/blob/master/media_handlers/video.js). Automation-wise, I also have no idea how to do that on other systems, so you would have to figure that out yourself. Don't have a Linux system? Luckily, a [Raspberry Pi](https://www.raspberrypi.org/) can fix that for you - it's a small little system that is perfect for situations like these. I run my bot on one too. You can get them for prices as low as $35-40.
+
+
 ## Installation
 
 [Download](https://github.com/FreekBes/insta_reddit_bot/archive/master.zip) or clone this repository into an empty folder. Create a file in this folder called *logindetails.json* and enter the following information into this file, replacing all the `ENTER` fields:
@@ -17,7 +27,7 @@ A bot for Instagram which pulls images from Reddit. This is also the source code
 
 Please note that two-factor authentication is not supported, so disable that for any account you plan on using. Also, I shouldn't have to mention this, but be careful showing/sharing any of the contents from this file - it does contain your password.
 
-After creating this file, open a CLI, cd to the project's folder, then run `npm install`. If you don't have npm installed on your system, find out how to install this [here](https://www.npmjs.com/get-npm).
+After creating this file, open a CLI, change directory to the project's folder (`cd /PATH/TO/PROJECT`), then run `npm install` and wait for the installation to complete.
 
 
 
