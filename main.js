@@ -52,13 +52,15 @@ function commentCredits(instagramPostId, originalUploader, redditPostId) {
 }
 
 // load device
-// if you get the IgSentryBlockError, replace _hahano with some random other string to circumvent it
+// if you get the IgSentryBlockError, replace _blahblahblah with some random other string to circumvent it
 igClient.state.generateDevice(loginDetails.userName + "_blahblahblah");
 
 // execute all requests prior to authorization in the real Android application
 igClient.simulate.preLoginFlow().then(function() {
-    console.log("Loggin in to " + loginDetails.username + "...");
+    console.log("Logging in to " + loginDetails.username + "...");
     igClient.account.login(loginDetails.username, loginDetails.password).then(function(loggedInUser) {
+        // execute all requests after authorization in the real Android application
+        // we're doing this on a next tick, as per the example given in instagram-private-api's tutorial...
         process.nextTick(async function() {
             await igClient.simulate.postLoginFlow();
         });
@@ -66,7 +68,36 @@ igClient.simulate.preLoginFlow().then(function() {
 
         try {
             // set subreddit
-            redditor.setSubreddit(loginDetails.subreddit);
+            if (typeof loginDetails.subreddit == "string") {
+                // only 1 subreddit has been set in logindetails.json as a string
+                redditor.setSubreddit(loginDetails.subreddit);
+            }
+            else if (typeof loginDetails.subreddit == "object") {
+                // subreddit(s) have been given as an object in logindetails.json
+                // check if chances of subreddits appearing's sum == 100...
+                // if this is not the case, the below function could get slow rather quickly.
+                if (Object.values(loginDetails.subreddit).reduce(function(a, b) { return a + b; }, 0) == 100) {
+                    // create a temporary array for later
+                    let tempArray = [];
+                    for (let item in loginDetails.subreddit) {
+                        if (loginDetails.subreddit.hasOwnProperty(item)) {
+                            // add each subreddit to the temporary array for as many times
+                            // as the appearance percentage given in logindetails.json
+                            for (let i = 0; i < loginDetails.subreddit[item]; i++) {
+                                tempArray.push(item);
+                            }
+                        }
+                    }
+                    // select a random subreddit from the temporary array
+                    redditor.setSubreddit(tempArray[Math.floor(Math.random() * tempArray.length)]);
+                }
+                else {
+                    throw Error("Subreddit's appearance sum does not equal exactly 100");
+                }
+            }
+            else {
+                throw Error("Cannot figure out what type subreddit is in logindetails.json");
+            }
             
             // retrieve a post that is still on the to-do list
             redditor.getPostToDo().then(function(post) {

@@ -15,6 +15,7 @@ exports.setSubreddit = function(subreddit) {
     }
     else {
         r = subreddit;
+        console.log("Subreddit set to " + subreddit);
     }
 };
 

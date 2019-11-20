@@ -31,6 +31,28 @@ After creating this file, open a CLI, change directory to the project's folder (
 
 
 
+### Mirroring from multiple subreddits
+
+Ever since version 0.2.0 of this bot, mirroring from multiple subreddits is now supported. To set this up, modify *logindetails.json* as follows:
+```
+{
+  "username": "ENTER_YOUR_INSTAGRAM_USERNAME",
+  "password": "ENTER_YOUR_INSTAGRAM_PASSWORD",
+  "subreddit": {
+    "/r/ENTER_A_RANDOM_SUBREDDIT": 30,
+    "/r/ENTER_A_RANDOM_SUBREDDIT": 40,
+    "/r/ENTER_A_RANDOM_SUBREDDIT": 25,
+    "/r/ENTER_A_RANDOM_SUBREDDIT": 5
+  }
+}
+```
+
+
+The number behind the subreddit's name is the chance of the subreddit being chosen by the bot during runtime. All the chances combined together must equal 100 (30+40+25+5=100), otherwise the bot will purposefully run into an error (a total of >100 might cause performance issues, eventually).
+
+This means you can mirror from a maximum of 100 subreddits from a single bot instance (when every subreddit's chance equals 1).
+
+
 ## Running the bot
 
 To run the bot, simply run the command `node main.js` in the project's folder.
