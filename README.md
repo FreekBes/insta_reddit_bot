@@ -16,6 +16,9 @@ Now keep in mind that I run the bot on Linux (Raspbian), so this guide is also f
 
 ## Installation
 
+> **Disclaimer:** by using this bot, you will not have control over what your account will be posting - the bot will post whatever the subreddit(s) you choose to mirror from upvotes. In essence, this means that sometimes the bot might post pictures that do not follow [Instagram's Terms of Service](https://help.instagram.com/477434105621119), which could result in Instagram taking action against your account, such as permanently deleting it. By using this bot, you agree with the fact that I am not responsible for any damages to your account(s) or other possessions in any means, whatever the cause.
+
+
 [Download](https://github.com/FreekBes/insta_reddit_bot/archive/master.zip) or clone this repository into an empty folder. Create a file in this folder called *logindetails.json* and enter the following information into this file, replacing all the `ENTER` fields:
 ```
 {
