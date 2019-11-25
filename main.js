@@ -40,7 +40,7 @@ function commentCredits(instagramPostId, originalUploader, redditPostId) {
     console.log("Commenting credits...");
     igClient.media.comment({
         mediaId: instagramPostId,
-        text: "Mirrored from a post on " + loginDetails.subreddit + " by /u/" + originalUploader + ": http://redd.it/" + redditPostId
+        text: "Mirrored from a post on " + redditor.getSubreddit() + " by /u/" + originalUploader + ": http://redd.it/" + redditPostId
     }).then(function(commentResponse) {
         console.log(commentResponse);
         console.log("Credits commented.");
@@ -114,7 +114,7 @@ igClient.simulate.preLoginFlow().then(function() {
                 // check if post is not a selftext
                 if (post['data']['selftext'] == "" || post['data']['selftext'] == null) {
                     console.log("Downloading media...");
-                    let tempExtraCaption = "\u2063\n\u2063\nMirrored from a post on " + loginDetails.subreddit + " by /u/" + post['data']['author'] + ": http://redd.it/" + post['data']['id'];
+                    let tempExtraCaption = "\u2063\n\u2063\nMirrored from a post on " + redditor.getSubreddit() + " by /u/" + post['data']['author'] + ": http://redd.it/" + post['data']['id'];
                     mediaDownloader.downloadMedia(post).then(function(media) {
                         console.log("Media downloaded!");
                         console.log(media);
