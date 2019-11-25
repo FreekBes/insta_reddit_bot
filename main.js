@@ -35,22 +35,6 @@ const loginDetails = require('./logindetails.json');
 const igPrivateApi = require('instagram-private-api');
 const igClient = new igPrivateApi.IgApiClient();
 
-// commenting function for posts
-function commentCredits(instagramPostId, originalUploader, redditPostId) {
-    console.log("Commenting credits...");
-    igClient.media.comment({
-        mediaId: instagramPostId,
-        text: "Mirrored from a post on " + redditor.getSubreddit() + " by /u/" + originalUploader + ": http://redd.it/" + redditPostId
-    }).then(function(commentResponse) {
-        console.log(commentResponse);
-        console.log("Credits commented.");
-    }).catch(function(err) {
-        console.warn("Could not comment credits!");
-        console.error(err);
-        console.log(err.response.body);
-    });
-}
-
 // load device
 // if you get the IgSentryBlockError, replace _blahblahblah with some random other string to circumvent it
 igClient.state.generateDevice(loginDetails.userName + "_blahblahblah");
@@ -126,7 +110,6 @@ igClient.simulate.preLoginFlow().then(function() {
                                 caption: post['data']['title'] + tempExtraCaption
                             }).then(function(publishResult) {
                                 console.log(publishResult);
-                                // commentCredits(publishResult.media.code, post['data']['author'], post['data']['id']);
                                 postStatus.markPostAsDone(post['data']['id']);
                                 clearTemp();
                             }).catch(function(err) {
@@ -145,7 +128,6 @@ igClient.simulate.preLoginFlow().then(function() {
                                 caption: post['data']['title'] + tempExtraCaption
                             }).then(function(publishResult) {
                                 console.log(publishResult);
-                                // commentCredits(publishResult.media.code, post['data']['author'], post['data']['id']);
                                 postStatus.markPostAsDone(post['data']['id']);
                                 clearTemp();
                             }).catch(function(err) {
