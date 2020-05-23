@@ -30,6 +30,7 @@ const mediaDownloader = require('./mediadownloader.js');
 
 // retrieve details needed for logging in to Instagram
 const loginDetails = require('./logindetails.json');
+const debugMode = loginDetails.debug != undefined && loginDetails.debug != null;
 
 // load the Instagram Private API Client
 const igPrivateApi = require('instagram-private-api');
@@ -39,19 +40,10 @@ const igClient = new igPrivateApi.IgApiClient();
 // if you get the IgSentryBlockError, replace _blahblahblah with some random other string to circumvent it
 igClient.state.generateDevice(loginDetails.userName + "_blahblahblah");
 
-// execute all requests prior to authorization in the real Android application
-igClient.simulate.preLoginFlow().then(function() {
-    console.log("Logging in to " + loginDetails.username + "...");
-    igClient.account.login(loginDetails.username, loginDetails.password).then(function(loggedInUser) {
-        // execute all requests after authorization in the real Android application
-        // we're doing this on a next tick, as per the example given in instagram-private-api's tutorial...
-        process.nextTick(async function() {
-            await igClient.simulate.postLoginFlow();
-        });
-        console.log("Login successful!");
-
-        try {
-            // set subreddit
+function doRedditStuff(loggedInUser) {
+    try {
+        // set subreddit
+        if (!debugMode) {
             if (typeof loginDetails.subreddit == "string") {
                 // only 1 subreddit has been set in logindetails.json as a string
                 redditor.setSubreddit(loginDetails.subreddit);
@@ -82,29 +74,35 @@ igClient.simulate.preLoginFlow().then(function() {
             else {
                 throw Error("Cannot figure out what type subreddit is in logindetails.json");
             }
+        }
+        else {
+            redditor.setPostToDebug(loginDetails.debug);
+            console.warn("Debugging mode activated");
+        }
+        
+        // retrieve a post that is still on the to-do list
+        redditor.getPostToDo().then(function(post) {
+            console.log("Found a post to handle:");
+
+            // fix broken imgur links
+            if (post['data']['url'].match(/http(s|):\/\/*imgur\.com\/.......$/) != null) {
+                post['data']['url'] = "https://i." + post['data']['url'].split("//")[1] + ".jpg";
+            }
             
-            // retrieve a post that is still on the to-do list
-            redditor.getPostToDo().then(function(post) {
-                console.log("Found a post to handle");
+            // fix more broken links
+            post['data']['url'] = post['data']['url'].replace("&amp;", "&");
 
-                // fix broken imgur links
-                if (post['data']['url'].match(/http(s|):\/\/*imgur\.com\/.......$/) != null) {
-                    post['data']['url'] = "https://i." + post['data']['url'].split("//")[1] + ".jpg";
-                }
-                
-                // fix more broken links
-                post['data']['url'] = post['data']['url'].replace("&amp;", "&");
-
-                // check if post is not a selftext
-                if (post['data']['selftext'] == "" || post['data']['selftext'] == null) {
-                    console.log("Downloading media...");
-                    let tempExtraCaption = "\u2063\n\u2063\nMirrored from a post on " + redditor.getSubreddit() + " by /u/" + post['data']['author'] + ": http://redd.it/" + post['data']['id'];
-                    mediaDownloader.downloadMedia(post).then(function(media) {
-                        console.log("Media downloaded!");
-                        console.log(media);
-                        if (media['type'] == 'image') {
-                            console.log("Uploading image to Instagram...");
-                            console.log("Caption: " + post['data']['title']);
+            // check if post is not a selftext
+            if (post['data']['selftext'] == "" || post['data']['selftext'] == null) {
+                console.log("Downloading media...");
+                let tempExtraCaption = "\u2063\n\u2063\nMirrored from a post on " + redditor.getSubreddit() + " by /u/" + post['data']['author'] + ": http://redd.it/" + post['data']['id'];
+                mediaDownloader.downloadMedia(post).then(function(media) {
+                    console.log("Media downloaded!");
+                    console.log(media);
+                    if (media['type'] == 'image') {
+                        console.log("Uploading image to Instagram...");
+                        console.log("Caption: " + post['data']['title']);
+                        if (!debugMode) {
                             igClient.publish.photo({
                                 file: fs.readFileSync(media['image']),
                                 caption: post['data']['title'] + tempExtraCaption
@@ -119,9 +117,11 @@ igClient.simulate.preLoginFlow().then(function() {
                                 clearTemp();
                             });
                         }
-                        else if (media['type'] == 'video') {
-                            console.log("Uploading video to Instagram...");
-                            console.log("Caption: " + post['data']['title']);
+                    }
+                    else if (media['type'] == 'video') {
+                        console.log("Uploading video to Instagram...");
+                        console.log("Caption: " + post['data']['title']);
+                        if (!debugMode) {
                             igClient.publish.video({
                                 video: fs.readFileSync(media['video']),
                                 coverImage: fs.readFileSync(media['thumbnail']),
@@ -137,30 +137,60 @@ igClient.simulate.preLoginFlow().then(function() {
                                 clearTemp();
                             });
                         }
-                        else {
-                            console.warn("Unknown media type!");
-                        }
-                    }).catch(function(err) {
-                        console.warn("MediaDownloader failed!");
-                        console.error(err);
-                        postStatus.markPostAsDone(post['data']['id']);
-                        clearTemp();
-                    });
-                }
-                else {
-                    console.warn("Selftext posts are not supported yet.");
-                }
-            });
-        }
-        catch(err) {
-            console.warn("An error occurred");
+                    }
+                    else {
+                        console.warn("Unknown media type!");
+                    }
+                }).catch(function(err) {
+                    console.warn("MediaDownloader failed!");
+                    console.error(err);
+                    postStatus.markPostAsDone(post['data']['id']);
+                    clearTemp();
+                });
+            }
+            else {
+                console.warn("Selftext posts are not supported yet.");
+            }
+        }).catch(function(err) {
+            console.warn("Failed to retrieve a post to do");
             console.error(err);
-        }
-    }).catch(function(err) {
-        console.warn("Failed to sign in!");
+        });
+    }
+    catch(err) {
+        console.warn("An error occurred");
         console.error(err);
+    };
+}
+
+function doInstagramLogin() {
+    return new Promise(function(resolve, reject) {
+        // execute all requests prior to authorization in the real Android application
+        igClient.simulate.preLoginFlow().then(function() {
+            console.log("Logging in to " + loginDetails.username + "...");
+            igClient.account.login(loginDetails.username, loginDetails.password).then(function(loggedInUser) {
+                // execute all requests after authorization in the real Android application
+                // we're doing this on a next tick, as per the example given in instagram-private-api's tutorial...
+                process.nextTick(async function() {
+                    await igClient.simulate.postLoginFlow();
+                });
+                console.log("Login successful!");
+                resolve(loggedInUser);
+            })
+            .catch(function(err) {
+                console.warn("Failed to sign in!");
+                console.error(err);
+            });
+        })
+        .catch(function(err) {
+            console.warn("Failed to simulate pre-login flow!");
+            console.error(err);
+        });
     });
-}).catch(function(err) {
-    console.warn("Failed to simulate pre-login flow!");
-    console.error(err);
-});
+}
+
+if (!debugMode) {
+    doInstagramLogin().then(doRedditStuff);
+}
+else {
+    doRedditStuff(null);
+}

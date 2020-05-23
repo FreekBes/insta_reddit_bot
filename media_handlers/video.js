@@ -6,6 +6,7 @@ function createVideoThumb(fromVid, thumbLoc) {
     return new Promise(function(resolve, reject) {
         console.log("Generating thumbnail for video...");
         let thumbCommand = 'ffmpeg -y -ss 00:00:00 -i ' + fromVid + ' -vframes 1 ' + thumbLoc;
+        console.log(thumbCommand);
         exec(thumbCommand, function(err, stdout, stderr) {
             if (err) {
                 reject(err);
@@ -22,7 +23,7 @@ function createVideoThumb(fromVid, thumbLoc) {
 
 exports.downloadSimpleVideo = function(postId, url, tempFolder) {
     return new Promise(function(resolve, reject) {
-        console.log("Downloading video...");
+        console.log("Downloading simple video...");
         url = url.replace("https://", "http://");
         console.log("URL: ", url);
         let downloadLoc = tempFolder + postId + "-temp.mp4";
@@ -36,6 +37,7 @@ exports.downloadSimpleVideo = function(postId, url, tempFolder) {
                 let thumbLoc = tempFolder + postId + "-thumb.jpg";
 
                 let command = 'ffmpeg -analyzeduration 20M -probesize 20M -y -re -f lavfi -i "movie=filename=' + downloadLoc + ':loop=5, setpts=N/(FRAME_RATE*TB)" -vcodec libx264 -b:v 3500k -vsync 2 -t 59 -acodec aac -b:a 128k -pix_fmt yuv420p -vf "scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:(ow-iw)/2:(oh-ih)/2:white" '+ convertLoc
+                console.log(command);
                 exec(command, function(err, stdout, stderr) {
                     if (err) {
                         reject(err);
@@ -62,7 +64,7 @@ exports.downloadSimpleVideo = function(postId, url, tempFolder) {
 
 exports.downloadRedditVideo = function(postId, redditVideo, tempFolder) {
     return new Promise(function(resolve, reject) {
-        console.log("Downloading video...");
+        console.log("Downloading Reddit video...");
         let url = redditVideo['fallback_url'];
         url = url.replace("https://", "http://");
         console.log("URL: ", url);
@@ -78,7 +80,8 @@ exports.downloadRedditVideo = function(postId, redditVideo, tempFolder) {
             console.log("Audio URL: ", audioUrl);
 
             console.log("Converting m3u8 file to audio...");
-            let command = "ffmpeg -y -i " + audioUrl + " -acodec copy -map a? " + audioOutput;
+            let command = "ffmpeg -y -i \"" + audioUrl + "\" -acodec copy -map a? " + audioOutput;
+            console.log(command);
             execSync(command, function(err, stdout, stderr) {
                 if (err) {
                     console.warn("Could not convert m3u8 to audio file! Continuing without audio.");
@@ -117,6 +120,7 @@ exports.downloadRedditVideo = function(postId, redditVideo, tempFolder) {
                     command = "ffmpeg -loglevel verbose -analyzeduration 20M -probesize 20M -y -re -i " + downloadLoc + " -vcodec libx264 -b:v 3500k -vsync 2 -t 59 -acodec aac -b:a 128k -pix_fmt yuv420p -vf 'scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:(ow-iw)/2:(oh-ih)/2:white' " + convertLoc;
                 }
                 
+                console.log(command);
                 exec(command, function(err, stdout, stderr) {
                     if (err) {
                         reject(err);
