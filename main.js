@@ -40,6 +40,87 @@ const igClient = new igPrivateApi.IgApiClient();
 // if you get the IgSentryBlockError, replace _blahblahblah with some random other string to circumvent it
 igClient.state.generateDevice(loginDetails.userName + "_blahblahblah");
 
+function handleMedia(post, media, tempExtraCaption) {
+    console.log("Media downloaded!");
+    console.log(media);
+    if (media['type'] == 'image') {
+        console.log("Uploading image to Instagram...");
+        console.log("Caption: " + post['data']['title']);
+        if (!debugMode) {
+            igClient.publish.photo({
+                file: fs.readFileSync(media['image']),
+                caption: post['data']['title'] + tempExtraCaption
+            }).then(function(publishResult) {
+                console.log(publishResult);
+                postStatus.markPostAsDone(post['data']['id']);
+                clearTemp();
+            }).catch(function(err) {
+                console.warn("Could not upload image to Instagram!");
+                console.error(err);
+                postStatus.markPostAsDone(post['data']['id']);
+                clearTemp();
+            });
+        }
+    }
+    else if (media['type'] == 'video') {
+        console.log("Uploading video to Instagram...");
+        console.log("Caption: " + post['data']['title']);
+        if (!debugMode) {
+            igClient.publish.video({
+                video: fs.readFileSync(media['video']),
+                coverImage: fs.readFileSync(media['thumbnail']),
+                caption: post['data']['title'] + tempExtraCaption
+            }).then(function(publishResult) {
+                console.log(publishResult);
+                postStatus.markPostAsDone(post['data']['id']);
+                clearTemp();
+            }).catch(function(err) {
+                console.warn("Could not upload video to Instagram!");
+                console.error(err);
+                postStatus.markPostAsDone(post['data']['id']);
+                clearTemp();
+            });
+        }
+    }
+    else {
+        console.warn("Unknown media type!");
+    }
+}
+
+function handleMediaError(err, post) {
+    console.warn("MediaDownloader failed!");
+    console.error(err);
+    postStatus.markPostAsDone(post['data']['id']);
+    clearTemp();
+}
+
+function handlePost(post) {
+    console.log("Found a post to handle:");
+    console.log('http://www.reddit.com/' + post['data']['permalink']);
+
+    // fix broken imgur links
+    if (post['data']['url'].match(/http(s|):\/\/*imgur\.com\/.......$/) != null) {
+        post['data']['url'] = "https://i." + post['data']['url'].split("//")[1] + ".jpg";
+    }
+    
+    // fix more broken links
+    post['data']['url'] = post['data']['url'].replace("&amp;", "&");
+
+    // check if post is not a selftext
+    if (post['data']['selftext'] == "" || post['data']['selftext'] == null) {
+        console.log("Downloading media...");
+        let tempExtraCaption = "\u2063\n\u2063\nMirrored from a post on " + redditor.getSubreddit() + " by /u/" + post['data']['author'] + ": http://redd.it/" + post['data']['id'];
+        mediaDownloader.downloadMedia(redditor, post).then(function() {
+            handleMedia(post, media, tempExtraCaption);
+        }).catch(function(err, post) {
+            handleMediaError(err, post);
+        });
+    }
+    else {
+        console.warn("Selftext posts are not supported yet.");
+    }
+}
+
 function doRedditStuff(loggedInUser) {
     try {
         // set subreddit
@@ -81,77 +162,7 @@ function doRedditStuff(loggedInUser) {
         }
         
         // retrieve a post that is still on the to-do list
-        redditor.getPostToDo().then(function(post) {
-            console.log("Found a post to handle:");
-
-            // fix broken imgur links
-            if (post['data']['url'].match(/http(s|):\/\/*imgur\.com\/.......$/) != null) {
-                post['data']['url'] = "https://i." + post['data']['url'].split("//")[1] + ".jpg";
-            }
-            
-            // fix more broken links
-            post['data']['url'] = post['data']['url'].replace("&amp;", "&");
-
-            // check if post is not a selftext
-            if (post['data']['selftext'] == "" || post['data']['selftext'] == null) {
-                console.log("Downloading media...");
-                let tempExtraCaption = "\u2063\n\u2063\nMirrored from a post on " + redditor.getSubreddit() + " by /u/" + post['data']['author'] + ": http://redd.it/" + post['data']['id'];
-                mediaDownloader.downloadMedia(post).then(function(media) {
-                    console.log("Media downloaded!");
-                    console.log(media);
-                    if (media['type'] == 'image') {
-                        console.log("Uploading image to Instagram...");
-                        console.log("Caption: " + post['data']['title']);
-                        if (!debugMode) {
-                            igClient.publish.photo({
-                                file: fs.readFileSync(media['image']),
-                                caption: post['data']['title'] + tempExtraCaption
-                            }).then(function(publishResult) {
-                                console.log(publishResult);
-                                postStatus.markPostAsDone(post['data']['id']);
-                                clearTemp();
-                            }).catch(function(err) {
-                                console.warn("Could not upload image to Instagram!");
-                                console.error(err);
-                                postStatus.markPostAsDone(post['data']['id']);
-                                clearTemp();
-                            });
-                        }
-                    }
-                    else if (media['type'] == 'video') {
-                        console.log("Uploading video to Instagram...");
-                        console.log("Caption: " + post['data']['title']);
-                        if (!debugMode) {
-                            igClient.publish.video({
-                                video: fs.readFileSync(media['video']),
-                                coverImage: fs.readFileSync(media['thumbnail']),
-                                caption: post['data']['title'] + tempExtraCaption
-                            }).then(function(publishResult) {
-                                console.log(publishResult);
-                                postStatus.markPostAsDone(post['data']['id']);
-                                clearTemp();
-                            }).catch(function(err) {
-                                console.warn("Could not upload video to Instagram!");
-                                console.error(err);
-                                postStatus.markPostAsDone(post['data']['id']);
-                                clearTemp();
-                            });
-                        }
-                    }
-                    else {
-                        console.warn("Unknown media type!");
-                    }
-                }).catch(function(err) {
-                    console.warn("MediaDownloader failed!");
-                    console.error(err);
-                    postStatus.markPostAsDone(post['data']['id']);
-                    clearTemp();
-                });
-            }
-            else {
-                console.warn("Selftext posts are not supported yet.");
-            }
-        }).catch(function(err) {
+        redditor.getPostToDo().then(handlePost).catch(function(err) {
             console.warn("Failed to retrieve a post to do");
             console.error(err);
         });

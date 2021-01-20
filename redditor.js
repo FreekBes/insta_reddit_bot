@@ -48,6 +48,26 @@ exports.retrieveRedditPosts = function(amount) {
     });
 };
 
+exports.getPostFromPermalink = function(permalink) {
+    return new Promise(function(resolve, reject) {
+        permalink = permalink.split("?")[0] + ".json";
+        console.log("Fetching Reddit post from URL " + permalink);
+        request({
+            url: permalink,
+            json: true
+        }, function(err, response, body) {
+            if (!err && response.statusCode === 200) {
+                console.log("Reddit post fetched:");
+                console.log(body[0]["data"]["children"][0]);
+                resolve(body[0]["data"]["children"][0]);
+            }
+            else {
+                reject(err);
+            }
+        });
+    });
+};
+
 exports.getPostToDo = function() {
     return new Promise(function(resolve, reject) {
         if (debugP != null) {

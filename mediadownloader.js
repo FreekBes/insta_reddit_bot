@@ -2,12 +2,20 @@ const fs = require('fs');
 const videoHandler = require("./media_handlers/video.js");
 const imageHandler = require("./media_handlers/image.js");
 
-exports.downloadMedia = function(post) {
+exports.downloadMedia = function(redditor, post, handlePost) {
     return new Promise(function(resolve, reject) {
+        console.log(post['data']);
         let mediaUrl = post['data']['url'];
         mediaUrl = mediaUrl.replace("https://", "http://");
         console.log("Initial mediaUrl: ", mediaUrl);
 
+        if (mediaUrl.match(/http(s|):\/\/www.reddit.com\/r\/.*$/) != null) {
+            console.log("Crosspost detected! Fetching post...");
+            redditor.getPostFromPermalink(mediaUrl).then(handlePost).catch(function(err) {
+                console.log("An error occurred: could not handle crosspost");
+                console.error(err);
+            });
+        }
         if (mediaUrl.match(/http(s|):\/\/i.imgur.com\/.*.gifv$/) != null) {
             console.log("GIFV on Imgur detected!");
             mediaUrl = mediaUrl.replace(".gifv", ".mp4");
