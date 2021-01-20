@@ -110,6 +110,12 @@ I did not create this library to spam Instagram. Please respect this, and do not
 
 
 
+### Contributing
+
+If you wish to contribute to this repository, feel free to go ahead. Keep in mind that the code is a bit messy, since I never originally intended on releasing it. I might clean it up some day.
+
+
+
 ## Need help?
 
 If you need any more help setting up your bot, feel free to send me a message on Instagram! You can find me at [@freekbes](https://www.instagram.com/freekbes).
