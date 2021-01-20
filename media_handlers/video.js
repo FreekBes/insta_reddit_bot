@@ -1,5 +1,5 @@
 const fs = require('fs');
-const http = require('http');
+const https = require('https');
 const { exec, execSync } = require('child_process');
 
 function createVideoThumb(fromVid, thumbLoc) {
@@ -24,11 +24,10 @@ function createVideoThumb(fromVid, thumbLoc) {
 exports.downloadSimpleVideo = function(postId, url, tempFolder) {
     return new Promise(function(resolve, reject) {
         console.log("Downloading simple video...");
-        url = url.replace("https://", "http://");
         console.log("URL: ", url);
         let downloadLoc = tempFolder + postId + "-temp.mp4";
         let mp4File = fs.createWriteStream(downloadLoc);
-        let req = http.get(url, function(res) {
+        let req = https.get(url, function(res) {
             res.pipe(mp4File);
 
             res.on('end', function() {
@@ -66,7 +65,6 @@ exports.downloadRedditVideo = function(postId, redditVideo, tempFolder) {
     return new Promise(function(resolve, reject) {
         console.log("Downloading Reddit video...");
         let url = redditVideo['fallback_url'];
-        url = url.replace("https://", "http://");
         console.log("URL: ", url);
 
         let hasAudio = false;
@@ -76,7 +74,6 @@ exports.downloadRedditVideo = function(postId, redditVideo, tempFolder) {
             hasAudio = true;
             audioOutput = tempFolder + postId + "-temp.ts";
             audioUrl = redditVideo['hls_url'];
-            audioUrl = audioUrl.replace("https://", "http://");
             console.log("Audio URL: ", audioUrl);
 
             console.log("Converting m3u8 file to audio...");
@@ -103,7 +100,7 @@ exports.downloadRedditVideo = function(postId, redditVideo, tempFolder) {
 
         let downloadLoc = tempFolder + postId + "-temp.mp4";
         let mp4File = fs.createWriteStream(downloadLoc);
-        let req = http.get(url, function(res) {
+        let req = https.get(url, function(res) {
             res.pipe(mp4File);
 
             res.on('end', function() {

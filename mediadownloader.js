@@ -6,7 +6,6 @@ exports.downloadMedia = function(redditor, post, handlePost) {
     return new Promise(function(resolve, reject) {
         //console.log(post['data']);
         let mediaUrl = post['data']['url'];
-        mediaUrl = mediaUrl.replace("https://", "http://");
         console.log("Initial mediaUrl: ", mediaUrl);
 
         if (mediaUrl.match(/http(s|):\/\/www.reddit.com\/r\/.*$/) != null) {

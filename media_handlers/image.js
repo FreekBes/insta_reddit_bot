@@ -1,5 +1,4 @@
-const fs = require('fs');
-const http = require('http');
+const https = require('https');
 const imageType = require('image-type');
 const videoHandler = require("./video.js");
 const Jimp = require('jimp');
@@ -7,10 +6,15 @@ const Jimp = require('jimp');
 exports.downloadImage = function(postId, url, previewImages, tempFolder) {
     return new Promise(function(resolve, reject) {
         console.log("Retrieving image mime type...");
-        url = url.replace("https://", "http://");
         console.log("URL: ", url);
         
-        http.get(url, function(res) {
+        https.get(url, function(res) {
+            res.on('close', function() {
+                console.log("Connection closed.");
+            })
+            res.on('error', function(err) {
+                reject(err);
+            });
             res.once('data', function(chunk) {
                 res.destroy();
 
@@ -35,7 +39,6 @@ exports.downloadImage = function(postId, url, previewImages, tempFolder) {
                         if (tempUrl != undefined && url != null) {
                             tempUrl = tempUrl.split("&amp;").join("&");
                             url = tempUrl;
-                            url = url.replace("https://", "http://");
                             console.log("New URL: " + url);
                             asMp4 = true;
                         }
@@ -61,6 +64,7 @@ exports.downloadImage = function(postId, url, previewImages, tempFolder) {
                     }
                 }
                 else {
+                    console.log("No GIF detected. Using imageHandler.");
                     Jimp.read(url, function(err, imag) {
                         if (err) {
                             reject(err)
