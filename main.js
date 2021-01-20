@@ -107,17 +107,19 @@ function handlePost(post) {
     post['data']['url'] = post['data']['url'].replace("&amp;", "&");
 
     // check if post is not a selftext
-    if (post['data']['selftext'] == "" || post['data']['selftext'] == null) {
+    if ((post['data']['selftext'] == "" || post['data']['selftext'] == null) && post['data']['url'].indexOf(post['data']['id']) == -1) {
         console.log("Downloading media...");
         let tempExtraCaption = "\u2063\n\u2063\nMirrored from a post on " + redditor.getSubreddit() + " by /u/" + post['data']['author'] + ": http://redd.it/" + post['data']['id'];
-        mediaDownloader.downloadMedia(redditor, post).then(function() {
+        mediaDownloader.downloadMedia(redditor, post).then(function(media) {
             handleMedia(post, media, tempExtraCaption);
-        }).catch(function(err, post) {
+        }).catch(function(err) {
             handleMediaError(err, post);
         });
     }
     else {
         console.warn("Selftext posts are not supported yet.");
+        postStatus.markPostAsDone(post['data']['id']);
+        clearTemp();
     }
 }
 
