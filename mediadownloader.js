@@ -4,7 +4,7 @@ const imageHandler = require("./media_handlers/image.js");
 
 exports.downloadMedia = function(redditor, post, handlePost) {
     return new Promise(function(resolve, reject) {
-        console.log(post['data']);
+        //console.log(post['data']);
         let mediaUrl = post['data']['url'];
         mediaUrl = mediaUrl.replace("https://", "http://");
         console.log("Initial mediaUrl: ", mediaUrl);
@@ -78,23 +78,44 @@ exports.downloadMedia = function(redditor, post, handlePost) {
         }
         else {
             console.log("Normal image detected");
-            imageHandler.downloadImage(post['data']['id'], mediaUrl, post['data']['preview']['images'], __dirname + "/temp/").then(function(res) {
-                if (res['isVideo']) {
-                    resolve({
-                        type: 'video',
-                        video: res['video'],
-                        thumbnail: res['thumbnail']
-                    });
-                }
-                else {
-                    resolve({
-                        type: 'image',
-                        image: res['image']
-                    });
-                }
-            }).catch(function(err) {
-                reject(err);
-            });
+            if (post['data']['preview']) {
+                imageHandler.downloadImage(post['data']['id'], mediaUrl, post['data']['preview']['images'], __dirname + "/temp/").then(function(res) {
+                    if (res['isVideo']) {
+                        resolve({
+                            type: 'video',
+                            video: res['video'],
+                            thumbnail: res['thumbnail']
+                        });
+                    }
+                    else {
+                        resolve({
+                            type: 'image',
+                            image: res['image']
+                        });
+                    }
+                }).catch(function(err) {
+                    reject(err);
+                });
+            }
+            else {
+                imageHandler.downloadImage(post['data']['id'], mediaUrl, null, __dirname + "/temp/").then(function(res) {
+                    if (res['isVideo']) {
+                        resolve({
+                            type: 'video',
+                            video: res['video'],
+                            thumbnail: res['thumbnail']
+                        });
+                    }
+                    else {
+                        resolve({
+                            type: 'image',
+                            image: res['image']
+                        });
+                    }
+                }).catch(function(err) {
+                    reject(err);
+                });
+            }
         }
     });
 };
