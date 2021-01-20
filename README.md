@@ -110,7 +110,7 @@ I did not create this library to spam Instagram. Please respect this, and do not
 
 
 
-### Contributing
+## Contributing
 
 If you wish to contribute to this repository, feel free to go ahead. Keep in mind that the code is a bit messy, since I never originally intended on releasing it. I might clean it up some day.
 
