@@ -1,6 +1,6 @@
 # insta_reddit_bot
 
-A bot for Instagram which pulls images from Reddit. It is the source code of [@196_bot](https://instagram.com/196_bot). It was also used for @me_irl_bot and @ik_ihe_bot, before they both got deleted by Instagram (for violating the TOS on certain posts, AFAIK). The former had over 200,000 followers.
+A bot for Instagram which pulls images from Reddit. It is the source code of [@me.irl.bot](https://instagram.com/me.irl.bot), and was also used for @me_irl_bot and @ik_ihe_bot, before they both got deleted by Instagram (for violating the TOS on certain posts, AFAIK). The former had over 200,000 followers.
 
 
 
