@@ -1,6 +1,6 @@
 # insta_reddit_bot
 
-A bot for Instagram which pulls images from Reddit. This was also the source code of @me_irl_bot and @ik_ihe_bot, before they both got deleted by Instagram.
+A bot for Instagram which pulls images from Reddit. It is the source code of [@me.irl.bot](https://instagram.com/me.irl.bot), and was also used for @me_irl_bot and @ik_ihe_bot, before they both got deleted by Instagram (for violating the TOS on certain posts, AFAIK). The former had over 200,000 followers.
 
 
 
@@ -107,6 +107,12 @@ If it's the account that has been banned, there's nothing more you can do other 
 ## Please do not use this library for spamming purposes
 
 I did not create this library to spam Instagram. Please respect this, and do not use it to flood Instagram with posts. Posting a maximum of 3 times an hour should be more than enough.
+
+
+
+## Contributing
+
+If you wish to contribute to this repository, feel free to go ahead. Keep in mind that the code is a bit messy, since I never originally intended on releasing it. I might clean it up some day.
 
 
 
