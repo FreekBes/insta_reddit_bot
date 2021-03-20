@@ -40,6 +40,13 @@ const igClient = new igPrivateApi.IgApiClient();
 // if you get the IgSentryBlockError, replace _blahblahblah with some random other string to circumvent it
 igClient.state.generateDevice(loginDetails.userName + "_blahblahblah");
 
+// set up cookies
+igClient.request.end$.subscribe(async function() {
+    const serialized = await igClient.state.serializeCookieJar();
+    delete serialized.version;
+    fs.writeFileSync(__dirname + "/cookies.json", JSON.stringify(serialized));
+});
+
 function handleMedia(post, media, tempExtraCaption) {
     console.log("Media downloaded!");
     console.log(media);
@@ -175,29 +182,39 @@ function doRedditStuff(loggedInUser) {
     };
 }
 
-function doInstagramLogin() {
+function doInstagramLogin(fromSession) {
     return new Promise(function(resolve, reject) {
-        // execute all requests prior to authorization in the real Android application
-        igClient.simulate.preLoginFlow().then(function() {
-            console.log("Logging in to " + loginDetails.username + "...");
-            igClient.account.login(loginDetails.username, loginDetails.password).then(function(loggedInUser) {
-                // execute all requests after authorization in the real Android application
-                // we're doing this on a next tick, as per the example given in instagram-private-api's tutorial...
-                process.nextTick(async function() {
-                    await igClient.simulate.postLoginFlow();
+        if (fromSession !== true && fs.existsSync(__dirname + "/cookies.json")) {
+            console.log("Restoring session...");
+            igClient.state.deserializeCookieJar(fs.readFileSync(__dirname + "/cookies.json", "utf8" )).then(function() {
+                doInstagramLogin(true).then(function(loggedInUser) {
+                    resolve(loggedInUser);
                 });
-                console.log("Login successful!");
-                resolve(loggedInUser);
+            });
+        }
+        else {
+            // execute all requests prior to authorization in the real Android application
+            igClient.simulate.preLoginFlow().then(function() {
+                console.log("Logging in to " + loginDetails.username + "...");
+                igClient.account.login(loginDetails.username, loginDetails.password).then(function(loggedInUser) {
+                    // execute all requests after authorization in the real Android application
+                    // we're doing this on a next tick, as per the example given in instagram-private-api's tutorial...
+                    process.nextTick(async function() {
+                        await igClient.simulate.postLoginFlow();
+                    });
+                    console.log("Login successful!");
+                    resolve(loggedInUser);
+                })
+                .catch(function(err) {
+                    console.warn("Failed to sign in!");
+                    console.error(err);
+                });
             })
             .catch(function(err) {
-                console.warn("Failed to sign in!");
+                console.warn("Failed to simulate pre-login flow!");
                 console.error(err);
             });
-        })
-        .catch(function(err) {
-            console.warn("Failed to simulate pre-login flow!");
-            console.error(err);
-        });
+        }
     });
 }
 
