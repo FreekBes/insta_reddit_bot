@@ -1,6 +1,6 @@
 {
   "name": "insta_reddit_bot",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "A bot for Instagram which pulls images from Reddit",
   "main": "main.js",
   "scripts": {
@@ -24,8 +24,8 @@
   "dependencies": {
     "https": "^1.0.0",
     "image-type": "^4.1.0",
-    "instagram-private-api": "^1.26.0",
-    "jimp": "^0.6.4",
+    "instagram-private-api": "^1.39.0",
+    "jimp": "^0.16.1",
     "request": "^2.88.0"
   }
 }
