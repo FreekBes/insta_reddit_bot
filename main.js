@@ -38,22 +38,18 @@ const igClient = new igPrivateApi.IgApiClient();
 
 // commenting function for posts
 function commentCredits(instagramPostId, originalUploader, redditPostId) {
-    console.log("Commenting credits in a about two seconds...");
-    setTimeout(function() {
-        console.log("Commenting credits now...");
-        igClient.media.comment({
-            mediaId: instagramPostId,
-            text: "Mirrored from a post on " + redditor.getSubreddit() + " by /u/" + originalUploader + ": http://redd.it/" + redditPostId
-        }).then(function(commentResponse) {
-            console.log(commentResponse);
-            console.log("Credits commented.");
-        }).catch(function(err) {
-            console.warn("Could not comment credits!");
-            console.error(err);
-            console.log(err.response.body);
-            commentCredits(instagramPostId, originalUploader, redditPostId);
-        });
-    }, 2000);
+    console.log("Commenting credits...");
+    igClient.media.comment({
+        mediaId: instagramPostId,
+        text: "Mirrored from a post on " + redditor.getSubreddit() + " by /u/" + originalUploader + ": http://redd.it/" + redditPostId
+    }).then(function(commentResponse) {
+        console.log(commentResponse);
+        console.log("Credits commented.");
+    }).catch(function(err) {
+        console.warn("Could not comment credits!");
+        console.error(err);
+        console.log(err.response.body);
+    });
 }
 
 // load device
@@ -82,7 +78,7 @@ function handleMedia(post, media, tempExtraCaption) {
                 postStatus.markPostAsDone(post['data']['id']);
                 clearTemp();
                 if (loginDetails.beatBot) {
-                    commentCredits(publishResult.media.code, post['data']['author'], post['data']['id']);
+                    commentCredits(publishResult.media.id, post['data']['author'], post['data']['id']);
                 }
             }).catch(function(err) {
                 console.warn("Could not upload image to Instagram!");
@@ -105,7 +101,7 @@ function handleMedia(post, media, tempExtraCaption) {
                 postStatus.markPostAsDone(post['data']['id']);
                 clearTemp();
                 if (loginDetails.beatBot) {
-                    commentCredits(publishResult.media.code, post['data']['author'], post['data']['id']);
+                    commentCredits(publishResult.media.id, post['data']['author'], post['data']['id']);
                 }
             }).catch(function(err) {
                 console.warn("Could not upload video to Instagram!");
