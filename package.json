@@ -1,6 +1,6 @@
 {
   "name": "insta_reddit_bot",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "A bot for Instagram which pulls images from Reddit",
   "main": "main.js",
   "scripts": {
