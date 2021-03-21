@@ -36,6 +36,26 @@ const debugMode = loginDetails.debug != undefined && loginDetails.debug != null;
 const igPrivateApi = require('instagram-private-api');
 const igClient = new igPrivateApi.IgApiClient();
 
+// commenting function for posts
+function commentCredits(instagramPostId, originalUploader, redditPostId) {
+    console.log("Commenting credits in a about two seconds...");
+    setTimeout(function() {
+        console.log("Commenting credits now...");
+        igClient.media.comment({
+            mediaId: instagramPostId,
+            text: "Mirrored from a post on " + redditor.getSubreddit() + " by /u/" + originalUploader + ": http://redd.it/" + redditPostId
+        }).then(function(commentResponse) {
+            console.log(commentResponse);
+            console.log("Credits commented.");
+        }).catch(function(err) {
+            console.warn("Could not comment credits!");
+            console.error(err);
+            console.log(err.response.body);
+            commentCredits(instagramPostId, originalUploader, redditPostId);
+        });
+    }, 2000);
+}
+
 // load device
 // if you get the IgSentryBlockError, replace _blahblahblah with some random other string to circumvent it
 igClient.state.generateDevice(loginDetails.userName + "_blahblahblah");
@@ -56,11 +76,14 @@ function handleMedia(post, media, tempExtraCaption) {
         if (!debugMode) {
             igClient.publish.photo({
                 file: fs.readFileSync(media['image']),
-                caption: post['data']['title'] + tempExtraCaption
+                caption: post['data']['title'] + (loginDetails.beatBot ? "" : tempExtraCaption)
             }).then(function(publishResult) {
                 console.log(publishResult);
                 postStatus.markPostAsDone(post['data']['id']);
                 clearTemp();
+                if (loginDetails.beatBot) {
+                    commentCredits(publishResult.media.code, post['data']['author'], post['data']['id']);
+                }
             }).catch(function(err) {
                 console.warn("Could not upload image to Instagram!");
                 console.error(err);
@@ -76,11 +99,14 @@ function handleMedia(post, media, tempExtraCaption) {
             igClient.publish.video({
                 video: fs.readFileSync(media['video']),
                 coverImage: fs.readFileSync(media['thumbnail']),
-                caption: post['data']['title'] + tempExtraCaption
+                caption: post['data']['title'] + (loginDetails.beatBot ? "" : tempExtraCaption)
             }).then(function(publishResult) {
                 console.log(publishResult);
                 postStatus.markPostAsDone(post['data']['id']);
                 clearTemp();
+                if (loginDetails.beatBot) {
+                    commentCredits(publishResult.media.code, post['data']['author'], post['data']['id']);
+                }
             }).catch(function(err) {
                 console.warn("Could not upload video to Instagram!");
                 console.error(err);
