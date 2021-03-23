@@ -1,6 +1,6 @@
 const fs = require('fs');
-
-const postsFile = __dirname + "/posts.json";
+const path = require('path');
+const postsFile = path.join(__dirname, "..", "posts.json");
 let postsDone = [];
 
 exports.init = function() {

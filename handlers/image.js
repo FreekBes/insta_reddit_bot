@@ -1,3 +1,4 @@
+const path = require('path');
 const https = require('https');
 const imageType = require('image-type');
 const videoHandler = require("./video.js");
@@ -19,7 +20,7 @@ exports.downloadImage = function(postId, url, previewImages, tempFolder) {
 				res.destroy();
 
 				let imgType = imageType(chunk);
-				if (imgType == "image/gif") {
+				if (imgType.mime == "image/gif") {
 					console.log("GIF detected! Using videoHandler instead.");
 					let asMp4 = false;
 					if (url.match(/http(s|):\/\/i.redd.it\/.*.gif$/) != null) {
@@ -64,7 +65,7 @@ exports.downloadImage = function(postId, url, previewImages, tempFolder) {
 					}
 				}
 				else {
-					console.log("No GIF detected. Using imageHandler.");
+					console.log("No GIF detected ("+imgType.mime+"). Using imageHandler.");
 					Jimp.read(url, function(err, imag) {
 						if (err) {
 							reject(err)
@@ -74,7 +75,7 @@ exports.downloadImage = function(postId, url, previewImages, tempFolder) {
 						}
 						else {
 							console.log("Download complete. Resizing image...");
-							let newFileSrc = tempFolder + postId + ".jpg";
+							let newFileSrc = path.join(tempFolder, postId + ".jpg");
 							try {
 								imag.background(0xFFFFFFFF).contain(1000, 1000).quality(90).write(newFileSrc, function() {
 									console.log("Resized image with success. Saved to " + newFileSrc);

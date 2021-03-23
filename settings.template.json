@@ -1,0 +1,48 @@
+{
+	"instagram": {
+		"username": "ENTER_INSTAGRAM_USERNAME_HERE",
+		"password": "ENTER_INSTAGRAM_PASSWORD_HERE",
+		"seed": "ENTER_RANDOM_WORD_HERE",
+		"credits_in_caption": true,
+		"restart_every": 0
+	},
+	"reddit": {
+		"subreddits": {
+			"/r/ENTER_A_SUBREDDIT_HERE": 100
+		}
+	},
+	"schedule": {
+		"human_error": {
+			"min": 20,
+			"max": 320
+		},
+		"hourly_timings": [
+			[12, 32, 52],
+			[12, 32, 52],
+			[12, 32, 52],
+			[12, 42],
+			[12, 42],
+			[12, 42],
+			[12, 42],
+			[12, 42],
+			[12, 42],
+			[12, 42],
+			[12, 42],
+			[12, 42],
+			[12, 42],
+			[12, 42],
+			[12, 42],
+			[12, 32, 52],
+			[12, 32, 52],
+			[12, 32, 52],
+			[12, 32, 52],
+			[12, 32, 52],
+			[12, 32, 52],
+			[12, 32, 52],
+			[12, 32, 52],
+			[12, 32, 52],
+			[12, 32, 52],
+			[12, 32, 52]
+		]
+	}
+}

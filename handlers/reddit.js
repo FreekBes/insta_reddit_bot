@@ -10,6 +10,10 @@ exports.setPostStatus = function(newPostStatus) {
 	postStatus = newPostStatus;
 };
 
+exports.getPostStatus = function() {
+	return postStatus;
+};
+
 exports.setSubreddit = function(subreddit) {
 	if (subreddit.indexOf("/r/") != 0) {
 		throw Error("Subreddit should always start with /r/. Example: /r/me_irl");

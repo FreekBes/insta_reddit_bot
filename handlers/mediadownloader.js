@@ -1,8 +1,8 @@
-const fs = require('fs');
-const videoHandler = require("./media_handlers/video.js");
-const imageHandler = require("./media_handlers/image.js");
+const videoHandler = require("./video.js");
+const imageHandler = require("./image.js");
+const temp = require("./temp.js");
 
-exports.downloadMedia = function(redditor, post, handlePost) {
+exports.downloadMedia = function(redditHandler, post, handlePost) {
 	return new Promise(function(resolve, reject) {
 		//console.log(post['data']);
 		let mediaUrl = post['data']['url'];
@@ -10,7 +10,7 @@ exports.downloadMedia = function(redditor, post, handlePost) {
 
 		if (mediaUrl.match(/http(s|):\/\/www.reddit.com\/r\/.*$/) != null) {
 			console.log("Crosspost detected! Fetching post...");
-			redditor.getPostFromPermalink(mediaUrl).then(handlePost).catch(function(err) {
+			redditHandler.getPostFromPermalink(mediaUrl).then(handlePost).catch(function(err) {
 				console.log("An error occurred: could not handle crosspost");
 				console.error(err);
 			});
@@ -18,7 +18,7 @@ exports.downloadMedia = function(redditor, post, handlePost) {
 		if (mediaUrl.match(/http(s|):\/\/i.imgur.com\/.*.gifv$/) != null) {
 			console.log("GIFV on Imgur detected!");
 			mediaUrl = mediaUrl.replace(".gifv", ".mp4");
-			videoHandler.downloadSimpleVideo(post['data']['id'], mediaUrl, __dirname + "/temp/").then(function(res) {
+			videoHandler.downloadSimpleVideo(post['data']['id'], mediaUrl, temp.getTempDir()).then(function(res) {
 				resolve({
 					type: 'video',
 					video: res['video'],
@@ -32,7 +32,7 @@ exports.downloadMedia = function(redditor, post, handlePost) {
 			if (post['data']['media']['reddit_video'] != undefined && post['data']['media']['reddit_video'] != null) {
 				if (post['data']['media']['reddit_video']['fallback_url'] != undefined && post['data']['media']['reddit_video']['fallback_url'] != null) {
 					console.log("Video on Reddit detected!");
-					videoHandler.downloadRedditVideo(post['data']['id'], post['data']['media']['reddit_video'], __dirname + "/temp/").then(function(res) {
+					videoHandler.downloadRedditVideo(post['data']['id'], post['data']['media']['reddit_video'], temp.getTempDir()).then(function(res) {
 						resolve({
 							type: 'video',
 							video: res['video'],
@@ -65,7 +65,7 @@ exports.downloadMedia = function(redditor, post, handlePost) {
 				mediaUrl += ".mp4";
 			}
 
-			videoHandler.downloadSimpleVideo(post['data']['id'], mediaUrl, __dirname + "/temp/").then(function(res) {
+			videoHandler.downloadSimpleVideo(post['data']['id'], mediaUrl, temp.getTempDir()).then(function(res) {
 				resolve({
 					type: 'video',
 					video: res['video'],
@@ -78,7 +78,7 @@ exports.downloadMedia = function(redditor, post, handlePost) {
 		else {
 			console.log("Normal image detected");
 			if (post['data']['preview']) {
-				imageHandler.downloadImage(post['data']['id'], mediaUrl, post['data']['preview']['images'], __dirname + "/temp/").then(function(res) {
+				imageHandler.downloadImage(post['data']['id'], mediaUrl, post['data']['preview']['images'], temp.getTempDir()).then(function(res) {
 					if (res['isVideo']) {
 						resolve({
 							type: 'video',
@@ -97,7 +97,7 @@ exports.downloadMedia = function(redditor, post, handlePost) {
 				});
 			}
 			else {
-				imageHandler.downloadImage(post['data']['id'], mediaUrl, null, __dirname + "/temp/").then(function(res) {
+				imageHandler.downloadImage(post['data']['id'], mediaUrl, null, temp.getTempDir()).then(function(res) {
 					if (res['isVideo']) {
 						resolve({
 							type: 'video',

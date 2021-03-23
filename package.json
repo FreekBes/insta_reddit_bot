@@ -1,8 +1,8 @@
 {
   "name": "insta_reddit_bot",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "description": "A bot for Instagram which pulls images from Reddit",
-  "main": "main.js",
+  "main": "bot.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -26,6 +26,7 @@
     "image-type": "^4.1.0",
     "instagram-private-api": "^1.39.0",
     "jimp": "^0.16.1",
+    "lookpath": "^1.2.0",
     "request": "^2.88.0"
   }
 }
