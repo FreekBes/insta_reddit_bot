@@ -112,7 +112,7 @@ I did not create this library to spam Instagram. Please respect this, and do not
 
 ### How do I start the bot automatically at boot?
 
-Use cron. Here's a guide: (https://www.cyberciti.biz/faq/linux-execute-cron-job-after-system-reboot/)[https://www.cyberciti.biz/faq/linux-execute-cron-job-after-system-reboot/]
+Use cron. Here's a guide: https://www.cyberciti.biz/faq/linux-execute-cron-job-after-system-reboot/
 
 ### I'm getting the IgSentryBlockError error upon starting the bot. How can I fix this?
 
