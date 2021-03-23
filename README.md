@@ -67,14 +67,14 @@ Previously, you had to automate the bot by using cron on Linux. Ever since versi
 
 ```
 "hourly_timings": [
-			[12, 32, 52],
-			[12, 45],
-			[4],
-			[],
-			[50],
-			[10],
-			[30, 34, 38],
-      ...
+  [12, 32, 52],
+  [12, 45],
+  [4],
+  [],
+  [50],
+  [10],
+  [30, 34, 38],
+  ...
 ```
 
 In this example, the bot would post at 0:12, 0:32, 0:52, 1:12, 1:32, 2:12, 2:45, 3:04, 5:50, 6:10, 7:30, 7:34 and 7:38. There's 24 rows in `hourly_timings`, so as you might have guessed, this schedule is in a 24-hour format. The bot expects 24 rows to be present at all times. In order to not post at specific hours, just remove all the numbers from in between the square brackets (so that it becomes an empty array, like in the example at 4 'o clock).
