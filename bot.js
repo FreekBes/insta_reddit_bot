@@ -93,13 +93,13 @@ function bot_loop(loggedInUser) {
 }
 
 function intervaller(loggedInUser) {
-	if (!bot_loop_running) {
-		let date = new Date();
-		let scheduleThisHour = settings.schedule.hourly_timings[date.getHours()];
-		let curMinute = date.getMinutes();
-		if (scheduleThisHour.length > 0) {
-			for (let minute in scheduleThisHour) {
-				if (minute == curMinute) {
+	let date = new Date();
+	let scheduleThisHour = settings.schedule.hourly_timings[date.getHours()];
+	let curMinute = date.getMinutes();
+	if (scheduleThisHour.length > 0) {
+		for (let i in scheduleThisHour) {
+			if (scheduleThisHour[i] == curMinute) {
+				if (!bot_loop_running) {
 					console.log("");
 					console.log("========================================");
 					console.log("");
@@ -108,11 +108,12 @@ function intervaller(loggedInUser) {
 					console.log("It's time to post!");
 					bot_loop(loggedInUser);
 				}
+				else {
+					console.warn("Bot was supposed to run right now, but it's still running from a previous time!");
+				}
+				break;
 			}
 		}
-	}
-	else {
-		console.warn("Bot was supposed to run right now, but it's still running!");
 	}
 }
 
@@ -126,7 +127,10 @@ function start_bot(loggedInUser) {
 	setInterval(function() {
 		intervaller(loggedInUser);
 	}, 60000);
-	console.log("Bot started. Current schedule:");
+	console.log("Bot started.");
+	let date = new Date();
+	console.log("Current time: " + date.getHours() + ":" + date.getMinutes());
+	console.log("Current schedule:");
 	for (let i = 0; i < 24; i++) {
 		console.log(i.toString() + " 'o clock: " + JSON.stringify(settings.schedule.hourly_timings[i]));
 	}
