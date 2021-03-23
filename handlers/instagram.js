@@ -44,6 +44,7 @@ exports.init = function(igSettings) {
 exports.signIn = function(username, password, fromSession) {
 	return new Promise(function(resolve, reject) {
 		if (fromSession !== true && cookiesExist()) {
+			console.log("Parsing cookies...");
 			igClient.state.deserializeCookieJar(fs.readFileSync(getCookiesPath(), "utf8")).then(function() {
 				exports.signIn(username, password, true).then(function(loggedInUser) {
 					resolve(loggedInUser);
@@ -53,6 +54,7 @@ exports.signIn = function(username, password, fromSession) {
 			});
 		}
 		else {
+			console.log("Signing in to Instagram...");
 			// execute all requests prior to authorization in the real Android application
 			igClient.simulate.preLoginFlow().then(function() {
 				igClient.account.login(username, password).then(function(loggedInUser) {
@@ -61,6 +63,7 @@ exports.signIn = function(username, password, fromSession) {
 					process.nextTick(async function() {
 						await igClient.simulate.postLoginFlow();
 					});
+					console.log("Signed in as " + username);
 					resolve(loggedInUser);
 				})
 				.catch(function(err) {
