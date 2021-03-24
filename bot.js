@@ -2,6 +2,8 @@
 const console = require('console');
 const process = require('process');
 
+console.log("Initializing...");
+
 // load custom packages
 const tempHandler = require("./handlers/temp.js");
 const igHandler = require("./handlers/instagram.js");
@@ -128,8 +130,6 @@ function start_bot(loggedInUser) {
 		intervaller(loggedInUser);
 	}, 60000);
 	console.log("Bot started.");
-	let date = new Date();
-	console.log("Current time: " + date.getHours() + ":" + date.getMinutes());
 	console.log("Current schedule:");
 	for (let i = 0; i < 24; i++) {
 		console.log(i.toString() + " 'o clock: " + JSON.stringify(settings.schedule.hourly_timings[i]));
@@ -139,6 +139,8 @@ function start_bot(loggedInUser) {
 // initialize Instagram client
 igHandler.init(settings.instagram);
 if (!debugMode || forceIg) {
+	let date = new Date();
+	console.log("Current time: " + date.getHours() + ":" + date.getMinutes());
 	igHandler.signIn(settings.instagram.username, settings.instagram.password)
 		.then(start_bot)
 		.catch(function(err) {
