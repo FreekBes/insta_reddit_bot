@@ -29,3 +29,5 @@ exports.clear = function() {
 		}
 	});
 }
+
+module.exports.checkCreateTemp();

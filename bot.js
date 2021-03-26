@@ -5,14 +5,10 @@ const process = require('process');
 console.log("Initializing...");
 
 // load custom packages
-const tempHandler = require("./handlers/temp.js");
 const igHandler = require("./handlers/instagram.js");
-const redditHandler = require("./handlers/reddit.js");
 const postStatus = require("./handlers/poststatus.js");
+const redditHandler = require("./handlers/reddit.js");
 redditHandler.setPostStatus(postStatus);
-
-// check if temporary folder exists, create it if it doesn't
-tempHandler.checkCreateTemp();
 
 // retrieve settings
 const settings = require('./settings.json');

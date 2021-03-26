@@ -22,6 +22,7 @@ exports.markPostAsDone = function(postId) {
 	postsDone.push(postId);
 	fs.writeFileSync(postsFile, JSON.stringify(postsDone), 'utf8');
 	console.log("Post added to done-list");
+	module.exports.reloadDoneList();
 };
 
 exports.postNotDone = function(postId) {
@@ -30,5 +31,8 @@ exports.postNotDone = function(postId) {
 
 exports.clearDoneList = function() {
 	fs.writeFileSync(postsFile, "[]", 'utf8');
+	console.log("posts.json cleared");
 	module.exports.reloadDoneList();
 };
+
+module.exports.init();
