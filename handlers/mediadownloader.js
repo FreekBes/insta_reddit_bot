@@ -101,8 +101,8 @@ exports.downloadMedia = function(redditHandler, post, handlePost) {
 					if (res['isVideo']) {
 						resolve({
 							type: 'video',
-							video: res['video'],
-							thumbnail: res['thumbnail']
+							video: res['video']['video'],
+							thumbnail: res['video']['thumbnail']
 						});
 					}
 					else {
