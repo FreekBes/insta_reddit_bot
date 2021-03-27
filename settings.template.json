@@ -11,6 +11,15 @@
 			"/r/ENTER_A_SUBREDDIT_HERE": 100
 		}
 	},
+	"discord": {
+		"enabled": false,
+		"token": "ENTER_DISCORD_TOKEN_HERE_THEN_ENABLE",
+		"prefix": "!",
+		"channels": {
+			"commands": "ENTER_CHANNEL_ID_HERE",
+			"system": "ENTER_CHANNEL_ID_HERE"
+		}
+	},
 	"schedule": {
 		"human_error": {
 			"min": 20,

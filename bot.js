@@ -9,6 +9,8 @@ const igHandler = require("./handlers/instagram.js");
 const postStatus = require("./handlers/poststatus.js");
 const redditHandler = require("./handlers/reddit.js");
 redditHandler.setPostStatus(postStatus);
+const discordBot = require("./handlers/discordbot.js");
+discordBot.setPostStatus(postStatus);
 
 // retrieve settings
 const settings = require('./settings.json');
@@ -73,6 +75,7 @@ function bot_loop(loggedInUser) {
 				.catch(function(err) {
 					console.warn("Unable to handle post!");
 					console.error(err);
+					discordBot.sendSystemMessage("Unable to handle a post!\n" + err.toString());
 				})
 				.finally(function() {
 					bot_loop_running = false;
@@ -80,12 +83,14 @@ function bot_loop(loggedInUser) {
 		}).catch(function(err) {
 			console.warn("Failed to retrieve a post to do!");
 			console.error(err);
+			discordBot.sendSystemMessage("Failed to retrieve a post to do.\n" + err.toString());
 			bot_loop_running = false;
 		});
 	}
 	catch(err) {
 		console.warn("An error occurred!");
 		console.error(err);
+		discordBot.sendSystemMessage("An error occurred!\n" + err.toString());
 		bot_loop_running = false;
 	};
 }
