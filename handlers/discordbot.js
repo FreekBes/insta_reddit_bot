@@ -28,6 +28,7 @@ client.on('message', function(msg) {
 	const args = getArgs(commandBody);
 	const command = args.shift().toLowerCase();
 	switch (command) {
+		case "bl":
 		case "blacklist": {
 			if (args.length == 0) {
 				msg.reply("usage: " + prefix + "blacklist *<redditPostId>*, or " + prefix + "blacklist *<redditPostUrl>*");
@@ -54,6 +55,33 @@ client.on('message', function(msg) {
 			}
 			break;
 		}
+		case "ubl":
+		case "unblacklist": {
+			if (args.length == 0) {
+				msg.reply("usage: " + prefix + "unblacklist *<redditPostId>*, or " + prefix + "unblacklist *<redditPostUrl>*");
+				return;
+			}
+			if (args[0].indexOf("http") == 0) {
+				let temp = args[0].split("/");
+				if (!temp.length >= 7) {
+					msg.reply("invalid Reddit post URL");
+					return;
+				}
+				args[0] = temp[6];
+			}
+			if (args[0].length != 6) {
+				msg.reply("the postId given is likely not a valid postId, or the URL is not an URL from Reddit. Cannot remove it from the blacklist.");
+				return;
+			}
+			if (postStatus.postNotDone(args[0])) {
+				msg.reply("this post was not on the blacklist!");
+			}
+			else {
+				postStatus.unmarkPostAsDone(args[0]);
+				msg.reply("the following post has been removed from the blacklist: https://www.reddit.com/comments/" + args[0] + "/.");
+			}
+			break;
+		}
 		case "schedule": {
 			let temp = "";
 			for (let i = 0; i < 24; i++) {
@@ -71,8 +99,12 @@ client.on('message', function(msg) {
 		case "help": {
 			msg.reply(
 `here's an overview of all available commands:
-- `+prefix+`blacklist <redditPostId> - *blacklist a post from Reddit*
-- `+prefix+`blacklist <redditPostUrl> - *blacklist a post from Reddit*
+- `+prefix+`blacklist <redditPostId> - *blacklist a Reddit post*
+- `+prefix+`blacklist <redditPostUrl> - *blacklist a Reddit post*
+- `+prefix+`bl - *short version of blacklist command*
+- `+prefix+`unblacklist <redditPostId> - *remove a Reddit post from the blacklist (or done-list)*
+- `+prefix+`unblacklist <redditPostUrl> - *remove a Reddit post from the blacklist (or done-list)*
+- `+prefix+`ubl - *short version of unblacklist command*
 - `+prefix+`schedule - *get an overview of the posting schedule per-hour*
 - `+prefix+`ping - *check if the bot is online*
 - `+prefix+`help - *this overview*

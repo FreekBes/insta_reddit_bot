@@ -25,6 +25,16 @@ exports.markPostAsDone = function(postId) {
 	module.exports.reloadDoneList();
 };
 
+exports.unmarkPostAsDone = function(postId) {
+	let index = postsDone.indexOf(postId);
+	if (index > -1) {
+		postsDone.slice(index, 1);
+	}
+	fs.writeFileSync(postsFile, JSON.stringify(postsDone), 'utf8');
+	console.log("Post removed from done-list");
+	module.exports.reloadDoneList();
+};
+
 exports.postNotDone = function(postId) {
 	return postsDone.indexOf(postId) == -1;
 };
