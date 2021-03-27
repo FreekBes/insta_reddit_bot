@@ -55,13 +55,7 @@ The number behind the subreddit's name is the chance of the subreddit being chos
 This means you can mirror from a maximum of 100 subreddits from a single bot instance (when every subreddit's chance equals 1).
 
 
-
-## Running the bot
-
-To run the bot, simply run the command `node bot.js` in the project's folder. To keep the bot running in the background, please check [this Stack Overflow page](https://stackoverflow.com/questions/4018154/how-do-i-run-a-node-js-app-as-a-background-service).
-
-
-### Automating the bot
+### Automating the bot: scheduling
 
 Previously, you had to automate the bot by using cron on Linux. Ever since version 0.3.0, the bot acts like a service on your computer, instead of a script. This means the automation tool is now built-in. To modify the times at which the bot posts, please take a look at the `hourly_timings` field in *settings.json*. Every row listed there, equals one hour. Every number in between the square brackets, is a minute at which the bot will post. An example:
 
@@ -78,6 +72,23 @@ Previously, you had to automate the bot by using cron on Linux. Ever since versi
 ```
 
 In this example, the bot would post at 0:12, 0:32, 0:52, 1:12, 1:32, 2:12, 2:45, 3:04, 5:50, 6:10, 7:30, 7:34 and 7:38. There's 24 rows in `hourly_timings`, so as you might have guessed, this schedule is in a 24-hour format. The bot expects 24 rows to be present at all times. In order to not post at specific hours, just remove all the numbers from in between the square brackets (so that it becomes an empty array, like in the example at 4 'o clock).
+
+
+### Discord integration
+
+For moderation purposes, this bot includes a Discord integration, which you can enable in *settings.json*. To make it work, create a new application in the [Discord Developer Portal](https://discord.com/developers/applications/), add a bot and set the token accordingly in *settings.json*. In your Discord server, create two text channels: one for sending commands to the bot, and one for system messages (from the bot itself). Right-click these channels, and copy the ID. Enter those in *settings.json*. Then add the bot to your server (use the OAuth2 section in the Discord Developer Portal to easily do this).
+
+#### Commands
+- !blacklist <redditPostUrl/redditPostId>: add a post from Reddit to the blacklist. This post will not get uploaded to Instagram.
+- !ping: check if the bot is up and running.
+
+To view more commands, use !help.
+
+
+
+## Running the bot
+
+To run the bot, simply run the command `node bot.js` in the project's folder. To keep the bot running in the background, please check [this Stack Overflow page](https://stackoverflow.com/questions/4018154/how-do-i-run-a-node-js-app-as-a-background-service).
 
 
 
@@ -100,6 +111,14 @@ I did not create this library to spam Instagram. Please respect this, and do not
 ### Reddit
 
 - subreddits: the subreddits to mirror from. See [mirroring from multiple subreddits](https://github.com/FreekBes/insta_reddit_bot#mirroring-from-multiple-subreddits) for a more in-depth explanation.
+
+### Discord
+
+- enabled: if `true`, Discord integration will be enabled
+- token: a Discord bot token, generated in the [Discord Developer Portal](https://discord.com/developers/applications/) (under the bot section)
+- prefix: the prefix used by the bot for commands. Defaults to `!`.
+- channels > commands: a channel ID in a Discord server, used for sending commands to the bot
+- channels > system: a channel ID in a Discord server, used for sending system messages to the Discord server
 
 ### Schedule
 
