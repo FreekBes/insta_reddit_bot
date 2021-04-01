@@ -15,12 +15,12 @@ exports.getPostStatus = function() {
 };
 
 exports.setSubreddit = function(subreddit) {
-	if (subreddit.indexOf("/r/") != 0) {
-		throw Error("Subreddit should always start with /r/. Example: /r/me_irl");
-	}
-	else {
+	if (subreddit.indexOf("/") == 0 && subreddit.charAt(subreddit.length - 1) != "/") {
 		r = subreddit;
 		console.log("Subreddit set to " + subreddit);
+	}
+	else {
+		throw Error("Subreddit should start with, but not end with, a / character. Example: /r/me_irl");
 	}
 };
 
