@@ -20,6 +20,10 @@ exports.downloadImage = function(postId, url, previewImages, tempFolder) {
 				res.destroy();
 
 				let imgType = imageType(chunk);
+				if (!imgType) {
+					reject("Could not detect mime type of image! Image URL: " + url);
+					return;
+				}
 				if (imgType.mime == "image/gif") {
 					console.log("GIF detected! Using videoHandler instead.");
 					let asMp4 = false;
