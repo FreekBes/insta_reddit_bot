@@ -6,17 +6,23 @@ const Jimp = require('jimp');
 
 exports.downloadImage = function(postId, url, previewImages, tempFolder) {
 	return new Promise(function(resolve, reject) {
+		let dataReceived = false;
+
 		console.log("Retrieving image mime type...");
 		console.log("URL: ", url);
 		
 		https.get(url, function(res) {
 			res.on('close', function() {
 				console.log("Connection closed.");
+				if (!dataReceived) {
+					reject("Connection closed abruptly");
+				}
 			})
 			res.on('error', function(err) {
 				reject(err);
 			});
 			res.once('data', function(chunk) {
+				dataReceived = true;
 				res.destroy();
 
 				let imgType = imageType(chunk);
