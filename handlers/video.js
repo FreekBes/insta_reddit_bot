@@ -53,7 +53,7 @@ exports.downloadSimpleVideo = function(postId, url, tempFolder) {
 							let convertLoc = path.join(tempFolder, postId + ".mp4");
 							let thumbLoc = path.join(tempFolder, postId + "-thumb.jpg");
 
-							let command = 'ffmpeg -analyzeduration 20M -probesize 20M -y -re -f lavfi -i "movie=filename=' + downloadLoc + ':loop=5, setpts=N/(FRAME_RATE*TB)" -vcodec libx264 -b:v 3500k -vsync 2 -t 59 -acodec aac -b:a 128k -pix_fmt yuv420p -vf "scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:(ow-iw)/2:(oh-ih)/2:white" '+ convertLoc
+							let command = 'ffmpeg -analyzeduration 20M -probesize 20M -y -re -f lavfi -i "movie=filename=' + downloadLoc + ':loop=5, setpts=N/(FRAME_RATE*TB)" -vcodec libx264 -b:v 3500k -vsync 2 -t 59 -acodec aac -b:a 128k -pix_fmt yuv420p -vf "scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:(ow-iw)/2:(oh-ih)/2:black" '+ convertLoc
 							console.log(command);
 							exec(command, function(err, stdout, stderr) {
 								if (err) {
@@ -139,11 +139,11 @@ exports.downloadRedditVideo = function(postId, redditVideo, tempFolder) {
 							let command = null;
 							if (hasAudio) {
 								console.log("Download complete! Merging audio with video and resizing the resulting MP4...");
-								command = "ffmpeg -loglevel verbose -analyzeduration 20M -probesize 20M -y -re -i " + downloadLoc + " -i " + audioOutput + " -vcodec libx264 -b:v 3500k -vsync 2 -t 59 -acodec aac -b:a 128k -pix_fmt yuv420p -vf 'scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:(ow-iw)/2:(oh-ih)/2:white' " + convertLoc;
+								command = "ffmpeg -loglevel verbose -analyzeduration 20M -probesize 20M -y -re -i " + downloadLoc + " -i " + audioOutput + " -vcodec libx264 -b:v 3500k -vsync 2 -t 59 -acodec aac -b:a 128k -pix_fmt yuv420p -vf 'scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:(ow-iw)/2:(oh-ih)/2:black' " + convertLoc;
 							}
 							else {
 								console.log("Download complete! Resizing MP4...");
-								command = "ffmpeg -loglevel verbose -analyzeduration 20M -probesize 20M -y -re -i " + downloadLoc + " -vcodec libx264 -b:v 3500k -vsync 2 -t 59 -acodec aac -b:a 128k -pix_fmt yuv420p -vf 'scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:(ow-iw)/2:(oh-ih)/2:white' " + convertLoc;
+								command = "ffmpeg -loglevel verbose -analyzeduration 20M -probesize 20M -y -re -i " + downloadLoc + " -vcodec libx264 -b:v 3500k -vsync 2 -t 59 -acodec aac -b:a 128k -pix_fmt yuv420p -vf 'scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:(ow-iw)/2:(oh-ih)/2:black' " + convertLoc;
 							}
 							
 							console.log(command);
