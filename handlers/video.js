@@ -36,6 +36,19 @@ function ffmpegInstalled() {
 	});
 }
 
+function ytdlInstalled() {
+	return new Promise(function(resolve, reject) {
+		lookpath("youtube-dl").then(function(path) {
+			if (path) {
+				resolve(true);
+			}
+			resolve(false);
+		}).catch(function(err) {
+			reject(err);
+		});
+	});
+}
+
 exports.downloadSimpleVideo = function(postId, url, tempFolder) {
 	return new Promise(function(resolve, reject) {
 		ffmpegInstalled()
@@ -58,6 +71,7 @@ exports.downloadSimpleVideo = function(postId, url, tempFolder) {
 							exec(command, function(err, stdout, stderr) {
 								if (err) {
 									reject(err);
+									return;
 								}
 
 								console.log(`stdout: ${stdout}`);
@@ -92,82 +106,57 @@ exports.downloadRedditVideo = function(postId, redditVideo, tempFolder) {
 		ffmpegInstalled()
 			.then(function(installed) {
 				if (installed) {
-					console.log("Downloading Reddit video...");
-					let url = redditVideo['fallback_url'];
-					console.log("URL: ", url);
-
-					let hasAudio = false;
-					let audioUrl = null;
-					let audioOutput = null;
-					if (redditVideo['hls_url'] != undefined && redditVideo['hls_url'] != null) {
-						hasAudio = true;
-						audioOutput = path.join(tempFolder, postId + "-temp.ts");
-						audioUrl = redditVideo['hls_url'];
-						console.log("Audio URL: ", audioUrl);
-
-						console.log("Converting m3u8 file to audio...");
-						let command = "ffmpeg -y -i \"" + audioUrl + "\" -acodec copy -map a? " + audioOutput;
-						console.log(command);
-						execSync(command, function(err, stdout, stderr) {
-							if (err) {
-								console.warn("Could not convert m3u8 to audio file! Continuing without audio.");
-								console.error(err);
-								hasAudio = false;
-								audioUrl = null;
-								audioOutput = null;
-							}
-							else {
-								console.log(`stdout: ${stdout}`);
-								console.log(`stderr: ${stderr}`);
-								console.log("Converted m3u8 to audio file with success!");
-							}
-						});
-					}
-					else {
-						console.log("No audio URL found. Continuing without audio.");
-					}
-
-					let downloadLoc = path.join(tempFolder, postId + "-temp.mp4");
-					let mp4File = fs.createWriteStream(downloadLoc);
-					let req = https.get(url, function(res) {
-						res.pipe(mp4File);
-
-						res.on('end', function() {
-							let convertLoc = path.join(tempFolder, postId + ".mp4");
-							let thumbLoc = path.join(tempFolder, postId + "-thumb.jpg");
-
-							let command = null;
-							if (hasAudio) {
-								console.log("Download complete! Merging audio with video and resizing the resulting MP4...");
-								command = "ffmpeg -loglevel verbose -analyzeduration 20M -probesize 20M -y -re -i " + downloadLoc + " -i " + audioOutput + " -vcodec libx264 -b:v 3500k -vsync 2 -t 59 -acodec aac -b:a 128k -pix_fmt yuv420p -vf 'scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:(ow-iw)/2:(oh-ih)/2:black' " + convertLoc;
-							}
-							else {
-								console.log("Download complete! Resizing MP4...");
-								command = "ffmpeg -loglevel verbose -analyzeduration 20M -probesize 20M -y -re -i " + downloadLoc + " -vcodec libx264 -b:v 3500k -vsync 2 -t 59 -acodec aac -b:a 128k -pix_fmt yuv420p -vf 'scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:(ow-iw)/2:(oh-ih)/2:black' " + convertLoc;
-							}
-							
-							console.log(command);
-							exec(command, function(err, stdout, stderr) {
-								if (err) {
-									reject(err);
-								}
-
-								console.log(`stdout: ${stdout}`);
-								console.log(`stderr: ${stderr}`);
-
-								console.log("Resized MP4 with success!")
-								createVideoThumb(convertLoc, thumbLoc).then(function() {
-									resolve({
-										video: convertLoc, 
-										thumbnail: thumbLoc
+					ytdlInstalled()
+						.then(function(installed2) {
+							if (installed2) {
+								console.log("Downloading Reddit video...");
+								let url = redditVideo['fallback_url'];
+								console.log("URL: ", url);
+			
+								let downloadLoc = path.join(tempFolder, postId + "-temp.mp4");
+								let command = "youtube-dl -o " + downloadLoc + " " + url
+								console.log(command);
+								exec(command, function(err, stdout, stderr) {
+									if (err) {
+										reject(err);
+										return;
+									}
+			
+									console.log(`stdout: ${stdout}`);
+									console.log(`stderr: ${stderr}`);
+			
+									let convertLoc = path.join(tempFolder, postId + ".mp4");
+									let thumbLoc = path.join(tempFolder, postId + "-thumb.jpg");
+									console.log("Download complete! Resizing MP4...");
+									command = "ffmpeg -loglevel verbose -analyzeduration 20M -probesize 20M -y -re -i " + downloadLoc + " -vcodec libx264 -b:v 3500k -vsync 2 -t 59 -acodec aac -b:a 128k -pix_fmt yuv420p -vf 'scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:(ow-iw)/2:(oh-ih)/2:black' " + convertLoc;
+									
+									console.log(command);
+									exec(command, function(errFfmpeg, stdoutFfmpeg, stderrFfmpeg) {
+										if (errFfmpeg) {
+											reject(errFfmpeg);
+											return;
+										}
+			
+										console.log(`stdout: ${stdoutFfmpeg}`);
+										console.log(`stderr: ${stderrFfmpeg}`);
+			
+										console.log("Resized MP4 with success!")
+										createVideoThumb(convertLoc, thumbLoc).then(function() {
+											resolve({
+												video: convertLoc, 
+												thumbnail: thumbLoc
+											});
+										})
+										.catch(function(err) {
+											reject(err);
+										});
 									});
-								})
-								.catch(function(err) {
-									reject(err);
 								});
-							});
+							}
+							else {
+								reject("youtube-dl was not found on your system. Please install it from http://ytdl-org.github.io/youtube-dl/download.html (or pip) to enable support for Reddit-video posts.");
+							}
 						});
-					});
 				}
 				else {
 					reject("FFMPEG was not found on your system. Please install it from https://ffmpeg.org/download.html (or apt-get if you're on Linux) to enable support for video posts.");
