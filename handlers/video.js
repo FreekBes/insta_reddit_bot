@@ -66,7 +66,7 @@ exports.downloadSimpleVideo = function(postId, url, tempFolder) {
 							let convertLoc = path.join(tempFolder, postId + ".mp4");
 							let thumbLoc = path.join(tempFolder, postId + "-thumb.jpg");
 
-							let command = 'ffmpeg -analyzeduration 20M -probesize 20M -y -re -f lavfi -i "movie=filename=' + downloadLoc + ':loop=5, setpts=N/(FRAME_RATE*TB)" -vcodec libx264 -b:v 3500k -vsync 2 -t 59 -acodec aac -b:a 128k -pix_fmt yuv420p -vf "scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:(ow-iw)/2:(oh-ih)/2:black" '+ convertLoc
+							let command = 'ffmpeg -analyzeduration 20M -probesize 20M -y -re -f lavfi -i "movie=filename=' + downloadLoc + ':loop=5, setpts=N/(FRAME_RATE*TB)" -vcodec libx264 -b:v 3500k -vsync 2 -t 59 -acodec aac -b:a 128k -pix_fmt yuv420p -vf "scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:(ow-iw)/2:(oh-ih)/2:white" '+ convertLoc
 							console.log(command);
 							exec(command, function(err, stdout, stderr) {
 								if (err) {
@@ -128,7 +128,7 @@ exports.downloadRedditVideo = function(postId, redditVideo, tempFolder) {
 									let convertLoc = path.join(tempFolder, postId + ".mp4");
 									let thumbLoc = path.join(tempFolder, postId + "-thumb.jpg");
 									console.log("Download complete! Resizing MP4...");
-									command = "ffmpeg -loglevel verbose -analyzeduration 20M -probesize 20M -y -re -i " + downloadLoc + " -vcodec libx264 -b:v 3500k -vsync 2 -t 59 -acodec aac -b:a 128k -pix_fmt yuv420p -vf 'scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:(ow-iw)/2:(oh-ih)/2:black' " + convertLoc;
+									command = "ffmpeg -loglevel verbose -analyzeduration 20M -probesize 20M -y -re -i " + downloadLoc + " -vcodec libx264 -b:v 3500k -vsync 2 -t 59 -acodec aac -b:a 128k -pix_fmt yuv420p -vf 'scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:(ow-iw)/2:(oh-ih)/2:white' " + convertLoc;
 									
 									console.log(command);
 									exec(command, function(errFfmpeg, stdoutFfmpeg, stderrFfmpeg) {

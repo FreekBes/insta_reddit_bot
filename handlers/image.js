@@ -87,7 +87,7 @@ exports.downloadImage = function(postId, url, previewImages, tempFolder) {
 							console.log("Download complete. Resizing image...");
 							let newFileSrc = path.join(tempFolder, postId + ".jpg");
 							try {
-								imag.background(0xFF000000).contain(1000, 1000).quality(90).write(newFileSrc, function() {
+								imag.background(0xFFFFFFFF).contain(1000, 1000).quality(90).write(newFileSrc, function() {
 									console.log("Resized image with success. Saved to " + newFileSrc);
 									resolve({
 										isVideo: false, 
