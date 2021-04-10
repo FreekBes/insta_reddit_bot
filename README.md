@@ -15,7 +15,7 @@ If you're upgrading to 0.3.x from 0.2.x, please take a look at the installation 
 The following software needs to be installed on your system in order for this bot to work:
 - [NodeJS](https://nodejs.org/)
 - [npm](https://www.npmjs.com/get-npm) (often included with NodeJS)
-- [ffmpeg](https://github.com/adaptlearning/adapt_authoring/wiki/Installing-FFmpeg) for video support
+- [youtube-dl](http://ytdl-org.github.io/youtube-dl/download.html) and [ffmpeg](https://github.com/adaptlearning/adapt_authoring/wiki/Installing-FFmpeg) for video support
 
 Now keep in mind that I run the bot on Linux (Raspbian), so this guide is also focused on Linux. You should be able to run this bot on other operating systems as well, but for video support it might require some modifying of the code in the [video-mediahandler](https://github.com/FreekBes/insta_reddit_bot/blob/master/media_handlers/video.js). Automation-wise, I also have no idea how to do that on other systems, so you would have to figure that out yourself. Don't have a Linux system? Luckily, a [Raspberry Pi](https://www.raspberrypi.org/) can fix that for you - it's a small little system that is perfect for situations like these. I run my bot on one too. You can get them for prices as low as $35-40.
 
