@@ -4,7 +4,7 @@ const imageType = require('image-type');
 const videoHandler = require("./video.js");
 const Jimp = require('jimp');
 
-exports.downloadImage = function(postId, url, previewImages, tempFolder) {
+exports.downloadImage = function(postId, permalink, url, tempFolder) {
 	return new Promise(function(resolve, reject) {
 		let dataReceived = false;
 
@@ -32,47 +32,15 @@ exports.downloadImage = function(postId, url, previewImages, tempFolder) {
 				}
 				if (imgType.mime == "image/gif") {
 					console.log("GIF detected! Using videoHandler instead.");
-					let asMp4 = false;
-					if (url.match(/http(s|):\/\/i.redd.it\/.*.gif$/) != null) {
-						let tempUrlOptions = previewImages[0]['variants']['mp4']['resolutions'];
-						let tempUrl = null;
-						let maxWidth = 0;
-						let lastIndex = -1;
-						for (t = 0; t < tempUrlOptions.length; t++) {
-							if (parseInt(tempUrlOptions[t]['width']) > maxWidth) {
-								maxWidth = parseInt(tempUrlOptions[t]['width']);
-								lastIndex = t;
-							}
-						}
-						if (maxWidth > 0 && lastIndex > -1) {
-							tempUrl = tempUrlOptions[lastIndex]['url'];
-						}
-						if (tempUrl != undefined && url != null) {
-							tempUrl = tempUrl.split("&amp;").join("&");
-							url = tempUrl;
-							console.log("New URL: " + url);
-							asMp4 = true;
-						}
-						else {
-							console.log("Could not change URL to preview MP4");
-							asMp4 = false;
-						}
-					}
-
-					if (asMp4) {
-						videoHandler.downloadSimpleVideo(postId, url, tempFolder).then(function(videoLoc, thumbLoc) {
-							resolve({
-								isVideo: true, 
-								video: videoLoc, 
-								thumbnail: thumbLoc
-							});
-						}).catch(function(err) {
-							reject(err);
+					videoHandler.downloadVideoYTDL(postId, permalink, temp.getTempDir()).then(function(res) {
+						resolve({
+							type: 'video',
+							video: res['video'],
+							thumbnail: res['thumbnail']
 						});
-					}
-					else {
-						reject("GIFs without an MP4 version are not supported at the moment");
-					}
+					}).catch(function(err) {
+						reject(err);
+					});
 				}
 				else {
 					console.log("No GIF detected ("+imgType.mime+"). Using imageHandler.");
