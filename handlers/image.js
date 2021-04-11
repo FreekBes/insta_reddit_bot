@@ -32,7 +32,7 @@ exports.downloadImage = function(postId, permalink, url, tempFolder) {
 				}
 				if (imgType.mime == "image/gif") {
 					console.log("GIF detected! Using videoHandler instead.");
-					videoHandler.downloadVideoYTDL(postId, permalink, temp.getTempDir()).then(function(res) {
+					videoHandler.downloadVideoYTDL(postId, permalink, tempFolder).then(function(res) {
 						resolve({
 							type: 'video',
 							video: res['video'],
