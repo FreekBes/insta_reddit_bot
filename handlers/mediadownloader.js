@@ -49,19 +49,7 @@ exports.downloadMedia = function(redditHandler, post, handlePost) {
 		else {
 			console.log("Normal image detected");
 			imageHandler.downloadImage(post['data']['id'], post['data']['permalink'], mediaUrl, temp.getTempDir()).then(function(res) {
-				if (res['isVideo']) {
-					resolve({
-						type: 'video',
-						video: res['video']['video'],
-						thumbnail: res['video']['thumbnail']
-					});
-				}
-				else {
-					resolve({
-						type: 'image',
-						image: res['image']
-					});
-				}
+				resolve(res);
 			}).catch(function(err) {
 				reject(err);
 			});
