@@ -93,7 +93,8 @@ exports.downloadVideoYTDL = function(postId, permalink, tempFolder) {
 									console.log("Resized MP4 with success!")
 									createVideoThumb(convertLoc, thumbLoc).then(function() {
 										resolve({
-											video: convertLoc, 
+											type: "video", 
+											video: convertLoc,
 											thumbnail: thumbLoc
 										});
 									})
