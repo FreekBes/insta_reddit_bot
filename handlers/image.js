@@ -33,11 +33,7 @@ exports.downloadImage = function(postId, permalink, url, tempFolder) {
 				if (imgType.mime == "image/gif") {
 					console.log("GIF detected! Using videoHandler instead.");
 					videoHandler.downloadVideoYTDL(postId, permalink, tempFolder).then(function(res) {
-						resolve({
-							type: 'video',
-							video: res['video'],
-							thumbnail: res['thumbnail']
-						});
+						resolve(res);
 					}).catch(function(err) {
 						reject(err);
 					});
@@ -58,7 +54,7 @@ exports.downloadImage = function(postId, permalink, url, tempFolder) {
 								imag.background(0xFFFFFFFF).contain(1000, 1000).quality(90).write(newFileSrc, function() {
 									console.log("Resized image with success. Saved to " + newFileSrc);
 									resolve({
-										isVideo: false, 
+										type: "image",
 										image: newFileSrc
 									});
 								});
