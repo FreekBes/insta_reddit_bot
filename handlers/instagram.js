@@ -161,6 +161,10 @@ exports.handleRedditPost = function(redditHandler, post, debugMode) {
 		// check if post is not a selftext
 		if ((post['data']['selftext'] == "" || post['data']['selftext'] == null) && post['data']['url'].indexOf(post['data']['id']) == -1) {
 			console.log("Downloading media...");
+			
+			const delay = ms => new Promise(resolve => setTimeout(resolve, ms)); 	//shhhh, don't tell Freek
+			await delay(5000);							//unsure if this even works because i don't know js
+			
 			let tempExtraCaption = "\u2063\n\u2063\nMirrored from a post on " + redditHandler.getSubreddit() + " by /u/" + post['data']['author'] + ": https://redd.it/" + post['data']['id'];
 			mediaDownloader.downloadMedia(redditHandler, post).then(function(media) {
 				if (!debugMode) {
