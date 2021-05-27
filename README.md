@@ -62,6 +62,7 @@ Previously, you had to automate the bot by using cron on Linux. Ever since versi
 ```
 "hourly_timings": [
   [12, 32, 52],
+  [12, 32],
   [12, 45],
   [4],
   [],
