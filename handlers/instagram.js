@@ -41,38 +41,51 @@ exports.init = function(igSettings) {
 	}
 };
 
-exports.signIn = function(username, password, fromSession) {
+function signInNewSession(username, password, resolve, reject) {
+	console.log("Signing in to Instagram...");
+	// execute all requests prior to authorization in the real Android application
+	igClient.simulate.preLoginFlow().then(function() {
+		igClient.account.login(username, password).then(function() {
+			// execute all requests after authorization in the real Android application
+			// we're doing this on a next tick, as per the example given in instagram-private-api's tutorial...
+			process.nextTick(async function() {
+				await igClient.simulate.postLoginFlow();
+			});
+			console.log("Signed in as " + username);
+			resolve();
+		})
+		.catch(function(err) {
+			reject(err);
+		});
+	})
+	.catch(function(err) {
+		reject(err);
+	});
+}
+
+function signInFromSession(username, password, resolve, reject) {
+	console.log("Checking if we're still signed in from a session...");
+	igClient.account.currentUser()
+		.then(function(res) {
+			console.log("Still signed in as " + res.username + " (from session)");
+			resolve();
+		})
+		.catch(function(err) {
+			console.log("It appears not! Let's sign in again.");
+			signInNewSession(username, password, resolve, reject);
+		});
+}
+
+exports.signIn = function(username, password) {
 	return new Promise(function(resolve, reject) {
-		if (fromSession !== true && cookiesExist()) {
+		if (cookiesExist()) {
 			console.log("Parsing cookies...");
 			igClient.state.deserializeCookieJar(fs.readFileSync(getCookiesPath(), "utf8")).then(function() {
-				exports.signIn(username, password, true).then(function(loggedInUser) {
-					resolve(loggedInUser);
-				}).catch(function(err) {
-					reject(err);
-				});
+				signInFromSession(username, password, resolve, reject);
 			});
 		}
 		else {
-			console.log("Signing in to Instagram...");
-			// execute all requests prior to authorization in the real Android application
-			igClient.simulate.preLoginFlow().then(function() {
-				igClient.account.login(username, password).then(function(loggedInUser) {
-					// execute all requests after authorization in the real Android application
-					// we're doing this on a next tick, as per the example given in instagram-private-api's tutorial...
-					process.nextTick(async function() {
-						await igClient.simulate.postLoginFlow();
-					});
-					console.log("Signed in as " + username);
-					resolve(loggedInUser);
-				})
-				.catch(function(err) {
-					reject(err);
-				});
-			})
-			.catch(function(err) {
-				reject(err);
-			});
+			signInNewSession(username, password, resolve, reject);
 		}
 	});
 };

@@ -21,7 +21,7 @@ const debugMode = args.indexOf("-debug") > -1;
 const forceIg = debugMode && args.indexOf("-forceig") > -1;
 
 let bot_loop_running = false;
-function bot_loop(loggedInUser) {
+function bot_loop() {
 	bot_loop_running = true;
 	// set subreddit
 	if (!debugMode) {
@@ -95,7 +95,7 @@ function bot_loop(loggedInUser) {
 	};
 }
 
-function intervaller(loggedInUser) {
+function intervaller() {
 	let date = new Date();
 	let scheduleThisHour = settings.schedule.hourly_timings[date.getHours()];
 	let curMinute = date.getMinutes();
@@ -109,7 +109,7 @@ function intervaller(loggedInUser) {
 					console.log("");
 					console.log("");
 					console.log("It's time to post!");
-					bot_loop(loggedInUser);
+					bot_loop();
 				}
 				else {
 					console.warn("Bot was supposed to run right now, but it's still running from a previous time!");
@@ -120,15 +120,15 @@ function intervaller(loggedInUser) {
 	}
 }
 
-function start_bot(loggedInUser) {
+function start_bot() {
 	if (debugMode) {
-		bot_loop(loggedInUser);
+		bot_loop();
 		return;
 	}
 	console.log("Starting bot...");
-	intervaller(loggedInUser);
+	intervaller();
 	setInterval(function() {
-		intervaller(loggedInUser);
+		intervaller();
 	}, 60000);
 	console.log("Bot started.");
 	console.log("Current schedule:");
