@@ -20,9 +20,7 @@ const args = process.argv.slice(2);
 const debugMode = args.indexOf("-debug") > -1;
 const forceIg = debugMode && args.indexOf("-forceig") > -1;
 
-let bot_loop_running = false;
 function bot_loop() {
-	bot_loop_running = true;
 	// set subreddit
 	if (!debugMode) {
 		if (typeof settings.reddit.subreddits == "string") {
@@ -76,22 +74,17 @@ function bot_loop() {
 					console.warn("Unable to handle post!");
 					console.error(err);
 					discordBot.sendSystemMessage("Unable to handle a post!\n" + err.toString());
-				})
-				.finally(function() {
-					bot_loop_running = false;
 				});
 		}).catch(function(err) {
 			console.warn("Failed to retrieve a post to do!");
 			console.error(err);
 			discordBot.sendSystemMessage("Failed to retrieve a post to do.\n" + err.toString());
-			bot_loop_running = false;
 		});
 	}
 	catch(err) {
 		console.warn("An error occurred!");
 		console.error(err);
 		discordBot.sendSystemMessage("An error occurred!\n" + err.toString());
-		bot_loop_running = false;
 	};
 }
 
@@ -102,18 +95,13 @@ function intervaller() {
 	if (scheduleThisHour.length > 0) {
 		for (let i in scheduleThisHour) {
 			if (scheduleThisHour[i] == curMinute) {
-				if (!bot_loop_running) {
-					console.log("");
-					console.log("========================================");
-					console.log("");
-					console.log("");
-					console.log("");
-					console.log("It's time to post!");
-					bot_loop();
-				}
-				else {
-					console.warn("Bot was supposed to run right now, but it's still running from a previous time!");
-				}
+				console.log("");
+				console.log("========================================");
+				console.log("");
+				console.log("");
+				console.log("");
+				console.log("It's time to post!");
+				bot_loop();
 				break;
 			}
 		}
