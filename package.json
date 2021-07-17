@@ -1,10 +1,14 @@
 {
   "name": "insta_reddit_bot",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "A bot for Instagram which pulls images from Reddit",
   "main": "bot.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node bot.js",
+    "debug": "NODE_ENV=dev DEBUG=* node bot.js",
+    "debug-noig": "NODE_ENV=dev DEBUG=* node bot.js -debug om3qwy",
+    "debug-forceig": "NODE_ENV=dev DEBUG=* node bot.js -forceig -debug om3qwy",
+    "settings": "nano settings.json"
   },
   "repository": {
     "type": "git",
