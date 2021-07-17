@@ -112,7 +112,7 @@ function handleMedia(redditHandler, post, media, tempExtraCaption) {
 						})
 						.finally(function() {
 							resolve(publishResult);
-						})
+						});
 				}
 				else {
 					resolve(publishResult);
@@ -140,7 +140,7 @@ function handleMedia(redditHandler, post, media, tempExtraCaption) {
 						})
 						.finally(function() {
 							resolve(publishResult);
-						})
+						});
 				}
 				else {
 					resolve(publishResult);
