@@ -4,12 +4,6 @@ A bot for Instagram which pulls images from Reddit. It is the source code of [@m
 
 
 
-## Version 0.3.0 is out now!
-
-If you're upgrading to 0.3.x from 0.2.x, please take a look at the installation process below (and do run `npm install` again). You can remove all cron lines for your installation using `crontab -e`, as the bot now uses an internal scheduling system. You will have to reconfigure the installation using the new *settings.json*. *logindetails.json* is no longer used.
-
-
-
 ## Requirements
 
 The following software needs to be installed on your system in order for this bot to work:
@@ -34,7 +28,7 @@ Now keep in mind that I run the bot on Linux (Raspbian), so this guide is also f
 
 Please note that two-factor authentication is not supported, so disable that for any account you plan on using. Also, I shouldn't have to mention this, but be careful showing/sharing any of the contents from this file - it does contain your password.
 
-After creating this file, open a CLI, change directory to the project's folder (`cd /PATH/TO/PROJECT`), then run `npm install` and wait for the installation to complete.
+After creating this file, open a CLI, change directory to the project's folder (`cd /PATH/TO/PROJECT`), then **run `npm install` and wait for the installation to complete.**
 
 
 ### Mirroring from multiple subreddits
@@ -134,18 +128,21 @@ I did not create this library to spam Instagram. Please respect this, and do not
 
 Use cron. Here's a guide: https://www.cyberciti.biz/faq/linux-execute-cron-job-after-system-reboot/
 
-### I'm getting the IgSentryBlockError error upon starting the bot. How can I fix this?
+### I'm getting the IgActionSpamError or IgSentryBlockError error. How can I fix this?
 
-Replace the `seed` field in *settings.json* (under `instagram`) and restart the bot. If If this does not fix your issue, it might be your IP-address that has been blocked from using Instagram's services. There's no way to circumvent this, except from using a VPN or proxy for your bot.
+Replace the `seed` value in *settings.json* (under `instagram`). Then remove *handlers/cookies.json* and restart the bot. If If this does not fix your issue, it might be your IP-address that has been blocked from using Instagram's services. There's no way to circumvent this, except from using a VPN or proxy for your bot.
 
+### How do I add hashtags or modify the credits line?
+
+Modify [handlers/instagram.js](https://github.com/FreekBes/insta_reddit_bot/blob/master/handlers/instagram.js). If you wish to modify the caption's text, modify line 177, else if you wish to change the comment's text, modify line 21.
 
 ### My Instagram account has been banned, what do I do?
 
 If it's the account that has been banned, there's nothing more you can do other than [contacting Instagram and appealing the ban](https://help.instagram.com/contact/606967319425038), or creating a new account. Use this bot at your own risk, and try not to spam using it.
 
-
 ### Need more help?
 
+If you've encountered an issue with the bot that's probably linked to the code, check the [Issues](https://github.com/FreekBes/insta_reddit_bot/issues) if the issue has been solved before, and if not, [create a new one](https://github.com/FreekBes/insta_reddit_bot/issues/new/choose).
 If you need any more help setting up your bot, feel free to send me a message on Instagram! You can find me at [@freekbes](https://www.instagram.com/freekbes).
 
 
@@ -153,3 +150,5 @@ If you need any more help setting up your bot, feel free to send me a message on
 ## Contributing
 
 If you wish to contribute to this repository, feel free to go ahead. To debug a post, you can use `node bot.js -debug <redditPostId>`. The post will get downloaded and converted for Instagram, but it won't get uploaded. To actually upload to Instagram while debugging a post, add the `-forceig` flag. You can find the post ID of a Reddit post in the URL of the comment section, it's the piece of text after */comments/* up until the next */*-character.
+
+If something's up with the Instagram side of things, run `npm script debug`. This will cause the bot to run with some arguments that specify the Instagram part to log more, for debugging purposes.
