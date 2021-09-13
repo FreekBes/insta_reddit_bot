@@ -101,6 +101,7 @@ I did not create this library to spam Instagram. Please respect this, and do not
 - password: Instagram password, in plaintext
 - seed: a random seed which is used to generate a fake device to sign in from
 - credits_in_caption: whether or not the credits are included in the caption. If the value here is `false`, the credits will be posted as comment. There's no way to disable credits.
+- credits_format: the format string for the credits posted in the caption or comments. %subreddit% will get replaced by the subreddit's name, %user% by the username of the user who posted the mirrored post, and %url% with a shortlink to this post. Other than that, you can do with this string as you want! Make it your language, add other stuff, whatever you need.
 - restart_every: a number which states how many hours need to pass before relogging in to Instagram (due to a session timeout). Currently not used.
 
 ### Reddit
