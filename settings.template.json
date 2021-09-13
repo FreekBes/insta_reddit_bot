@@ -4,6 +4,7 @@
 		"password": "ENTER_INSTAGRAM_PASSWORD_HERE",
 		"seed": "ENTER_RANDOM_WORD_HERE",
 		"credits_in_caption": true,
+		"credits_format": "Mirrored from a post on %subreddit% by %user%: %url%",
 		"restart_every": 0
 	},
 	"reddit": {

@@ -13,12 +13,20 @@ function cookiesExist() {
 	return fs.existsSync(getCookiesPath());
 }
 
+function getCreditsString(redditHandler, username, postid) {
+	let credits = creditsFormat.replace("%subreddit%", redditHandler.getSubreddit());
+	credits = credits.replace("%user%", "/u/"+username);
+	credits = credits.replace("%url%", "https://redd.it/"+postid);
+	return credits;
+}
+
 let doCommentCredits = false;
+let creditsFormat = null;
 exports.commentCredits = function(redditHandler, instagramPostId, originalUploader, redditPostId) {
 	return new Promise(function(resolve, reject) {
 		igClient.media.comment({
 			mediaId: instagramPostId,
-			text: "Mirrored from a post on " + redditHandler.getSubreddit() + " by /u/" + originalUploader + ": https://redd.it/" + redditPostId
+			text: getCreditsString(redditHandler, originalUploader, redditPostId)
 		}).then(function(commentResponse) {
 			resolve(commentResponse);
 		}).catch(function(err) {
@@ -39,6 +47,7 @@ exports.init = function(igSettings) {
 	if (!igSettings.credits_in_caption) {
 		doCommentCredits = true;
 	}
+	creditsFormat = igSettings.credits_format;
 };
 
 function signInNewSession(username, password, resolve, reject) {
@@ -90,7 +99,7 @@ exports.signIn = function(username, password) {
 	});
 };
 
-function handleMedia(redditHandler, post, media, tempExtraCaption) {
+function handleMedia(redditHandler, post, media) {
 	return new Promise(function(resolve, reject) {
 		console.log("Media downloaded!");
 		console.log(media);
@@ -98,7 +107,7 @@ function handleMedia(redditHandler, post, media, tempExtraCaption) {
 			console.log("Uploading image to Instagram...");
 			igClient.publish.photo({
 				file: fs.readFileSync(media['image']),
-				caption: post['data']['title'] + (doCommentCredits ? "" : tempExtraCaption)
+				caption: post['data']['title'] + (doCommentCredits ? "" : "\u2063\n\u2063\n" + getCreditsString(redditHandler, post['data']['author'], post['data']['id']))
 			}).then(function(publishResult) {
 				console.log("Image uploaded!");
 				if (doCommentCredits) {
@@ -126,7 +135,7 @@ function handleMedia(redditHandler, post, media, tempExtraCaption) {
 			igClient.publish.video({
 				video: fs.readFileSync(media['video']),
 				coverImage: fs.readFileSync(media['thumbnail']),
-				caption: post['data']['title'] + (doCommentCredits ? "" : tempExtraCaption)
+				caption: post['data']['title'] + (doCommentCredits ? "" : "\u2063\n\u2063\n" + getCreditsString(redditHandler, post['data']['author'], post['data']['id']))
 			}).then(function(publishResult) {
 				console.log("Video uploaded!");
 				if (doCommentCredits) {
@@ -174,10 +183,9 @@ exports.handleRedditPost = function(redditHandler, post, debugMode) {
 		// check if post is not a selftext
 		if ((post['data']['selftext'] == "" || post['data']['selftext'] == null) && post['data']['url'].indexOf(post['data']['id']) == -1) {
 			console.log("Downloading media...");
-			let tempExtraCaption = "\u2063\n\u2063\nMirrored from a post on " + redditHandler.getSubreddit() + " by /u/" + post['data']['author'] + ": https://redd.it/" + post['data']['id'];
 			mediaDownloader.downloadMedia(redditHandler, post).then(function(media) {
 				if (!debugMode) {
-					handleMedia(redditHandler, post, media, tempExtraCaption)
+					handleMedia(redditHandler, post, media)
 						.then(function(igPublishResult) {
 							resolve(igPublishResult);
 						})
