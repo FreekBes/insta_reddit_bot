@@ -72,19 +72,25 @@ function bot_loop() {
 				})
 				.catch(function(err) {
 					console.warn("Unable to handle post!");
-					console.error(err);
-					discordBot.sendSystemMessage("Unable to handle a post!\n" + err.toString());
+					if (err) {
+						console.error(err);
+						discordBot.sendSystemMessage("Unable to handle a post!\n" + err.toString());
+					}
 				});
 		}).catch(function(err) {
 			console.warn("Failed to retrieve a post to do!");
-			console.error(err);
-			discordBot.sendSystemMessage("Failed to retrieve a post to do.\n" + err.toString());
+			if (err) {
+				console.error(err);
+				discordBot.sendSystemMessage("Failed to retrieve a post to do.\n" + err.toString());
+			}
 		});
 	}
 	catch(err) {
 		console.warn("An error occurred!");
-		console.error(err);
-		discordBot.sendSystemMessage("An error occurred!\n" + err.toString());
+		if (err) {
+			console.error(err);
+			discordBot.sendSystemMessage("An error occurred!\n" + err.toString());
+		}
 	};
 }
 
