@@ -53,20 +53,20 @@ exports.init = function(igSettings) {
 function signInNewSession(username, password, resolve, reject) {
 	console.log("Signing in to Instagram...");
 	// execute all requests prior to authorization in the real Android application
-	igClient.simulate.preLoginFlow().then(function() {
+	// igClient.simulate.preLoginFlow().then(function() {
 		igClient.account.login(username, password).then(function() {
 			// execute all requests after authorization in the real Android application
 			// we're doing this on a next tick, as per the example given in instagram-private-api's tutorial...
-			process.nextTick(async function() {
-				await igClient.simulate.postLoginFlow();
-			});
+			// process.nextTick(async function() {
+			// 	await igClient.simulate.postLoginFlow();
+			// });
 			console.log("Signed in as " + username);
 			resolve();
 		})
-		.catch(function(err) {
-			reject(err);
-		});
-	})
+	// 	.catch(function(err) {
+	// 		reject(err);
+	// 	});
+	// })
 	.catch(function(err) {
 		reject(err);
 	});
