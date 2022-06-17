@@ -120,7 +120,9 @@ client.on('message', function(msg) {
 });
 
 exports.sendSystemMessage = function(msg) {
-	client.channels.cache.get(settings.discord.channels.system).send(msg);
+	if (settings.discord.enabled) {
+		client.channels.cache.get(settings.discord.channels.system).send(msg);
+	}
 };
 
 exports.setPostStatus = function(newPostStatus) {
