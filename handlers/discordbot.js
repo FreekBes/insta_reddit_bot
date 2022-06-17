@@ -121,7 +121,10 @@ client.on('message', function(msg) {
 
 exports.sendSystemMessage = function(msg) {
 	if (settings.discord.enabled) {
-		client.channels.cache.get(settings.discord.channels.system).send(msg);
+		const channel = client.channels.cache.get(settings.discord.channels.system);
+		if (channel) {
+			channel.send(msg);
+		}
 	}
 };
 
