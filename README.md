@@ -1,4 +1,8 @@
-# insta_reddit_bot
+# [UNMAINTAINED] insta_reddit_bot
+
+## This repository is no longer maintained and the codebase might not work properly. You can request help by [creating an issue](https://github.com/FreekBes/insta_reddit_bot/issues/new), however it's highly likely I won't be able to help, as I no longer use this script myself and thus am no longer updating its code.
+
+---
 
 A bot for Instagram which pulls images from Reddit. It was the source code for @me_irl_bot (later @me.irl.bot) and @ik_ihe_bot, before they all got deleted by Instagram (for violating the TOS on certain posts, AFAIK). The first run had over 200,000 followers.
 
